@@ -1,0 +1,10 @@
+alias reload="source ~/.zshrc"
+alias zshrc="vim ~/.zshrc"
+alias aliases="vim ~/.aliases"
+
+# git
+alias ga="git add"
+alias glog="git log"
+alias gcan="git commit --amend --no-edit"
+alias gcm="git commit -m"
+alias gs="git status"
