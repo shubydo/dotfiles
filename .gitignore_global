@@ -1,0 +1,16 @@
+# Global gitignore file
+# git config --global core.excludesfile $HOME/.gitignore_global
+
+# OS
+# Mac
+.DS_Store
+
+
+# IDE
+.vscode
+.idea
+
+
+# Terraform
+.terraform*
+*.tfstate
