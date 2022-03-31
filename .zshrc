@@ -126,3 +126,13 @@ export NVM="$HOME/nvm"
 export NVM_DIR="$HOME/.nvm"
   [ -s "$(brew --prefix nvm)/nvm.sh" ] && \. "$(brew --prefix nvm)/nvm.sh"  # This loads nvm
   [ -s "$(brew --prefix nvm)/etc/bash_completion.d/nvm" ] && \. "$(brew --prefix nvm)/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+
+# iTerm
+# Use random color for new tabs
+function tabcolor {
+  echo -n -e "\033]6;1;bg;red;brightness;$1\a"
+  echo -n -e "\033]6;1;bg;green;brightness;$2\a"
+  echo -n -e "\033]6;1;bg;blue;brightness;$3\a"
+}
+
+tabcolor $(jot -r 1 0 255) $(jot -r 1 0 255) $(jot -r 1 0 255)
