@@ -130,3 +130,7 @@ function tabcolor {
 }
 
 tabcolor $(jot -r 1 0 255) $(jot -r 1 0 255) $(jot -r 1 0 255)
+
+# Azure CLI
+autoload bashcompinit && bashcompinit
+source "$(brew --prefix az)/etc/bash_completion.d/az"
