@@ -77,7 +77,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(aws brew gcloud git golang helm kubectl minikube terraform zsh-autosuggestions)
+plugins=(asdf aws brew gcloud git golang helm kubectl minikube terraform zsh-autosuggestions)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -120,12 +120,6 @@ source $ZSH/oh-my-zsh.sh
 export GOPATH="$HOME/go"
 export GOROOT="$(brew --prefix golang)/libexec"
 export PATH="${PATH}:${GOPATH}/bin:${GOROOT}/bin"
-
-# Node
-export NVM="$HOME/nvm"
-export NVM_DIR="$HOME/.nvm"
-  [ -s "$(brew --prefix nvm)/nvm.sh" ] && \. "$(brew --prefix nvm)/nvm.sh"  # This loads nvm
-  [ -s "$(brew --prefix nvm)/etc/bash_completion.d/nvm" ] && \. "$(brew --prefix nvm)/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
 # iTerm
 # Use random color for new tabs
