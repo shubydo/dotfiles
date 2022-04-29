@@ -77,7 +77,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(asdf aws brew gcloud git golang helm kubectl minikube terraform zsh-autosuggestions)
+plugins=(1password asdf aws brew gcloud git golang helm kubectl minikube terraform zsh-autosuggestions)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -134,3 +134,6 @@ tabcolor $(jot -r 1 0 255) $(jot -r 1 0 255) $(jot -r 1 0 255)
 # Azure CLI
 autoload bashcompinit && bashcompinit
 source "$(brew --prefix az)/etc/bash_completion.d/az"
+
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
