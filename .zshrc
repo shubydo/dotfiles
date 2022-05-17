@@ -77,7 +77,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(1password asdf aws brew gcloud git golang helm kubectl minikube terraform zsh-autosuggestions)
+plugins=(1password asdf aws brew gcloud git golang helm kubectl macos terraform zsh-autosuggestions)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -104,17 +104,21 @@ source $ZSH/oh-my-zsh.sh
 # For a full list of active aliases, run `alias`.
 #
 # Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
+# alias zshconfig="mate $HOME.zshrc"
+# alias ohmyzsh="mate $HOME.oh-my-zsh"
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+# To customize prompt, run `p10k configure` or edit "$HOME/.p10k.zsh"
+[[ ! -f "$HOME/.p10k.zsh" ]] || source "$HOME/.p10k.zsh"
 
 # Functions
-[[ ! -f ~/.functions ]] || source ~/.functions
+[[ ! -f "$HOME/.functions" ]] || source "$HOME/.functions"
+[[ ! -f "$HOME/.functions_work" ]] || source "$HOME/.functions_work"
 
 # Aliases
-[[ ! -f ~/.aliases ]] || source ~/.aliases
+[[ ! -f "$HOME/.aliases" ]] || source "$HOME/.aliases"
+
+export PATH="$PATH:$HOME/code/shell_scripts"
+
 
 # Go
 export GOPATH="$HOME/go"
@@ -136,4 +140,3 @@ autoload bashcompinit && bashcompinit
 source "$(brew --prefix az)/etc/bash_completion.d/az"
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-

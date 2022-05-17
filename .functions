@@ -1,6 +1,14 @@
+# Decode JWT and print in readable format to console. 
+# Usage: jwtd <MY_JWT>
 jwtd() {
     if [[ -x $(command -v jq) ]]; then
          jq -R 'split(".") | .[0],.[1] | @base64d | fromjson' <<< "${1}"
          echo "Signature: $(echo "${1}" | awk -F'.' '{print $3}')"
     fi
+}
+
+# Get current IP and copy to clipboard (Mac specific)
+myip() {
+	curl -fSsL ifconfig.me | pbcopy
+        echo "Current IP: $(pbpaste)"
 }
