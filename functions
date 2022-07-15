@@ -12,3 +12,27 @@ myip() {
 	curl -fSsL ifconfig.me | pbcopy
         echo "Current IP: $(pbpaste)"
 }
+
+# Upgrade all versions of tools managed via asdf: https://github.com/asdf-vm/asdf
+asdfupgrade() {
+	TOOLS=$(asdf plugin list)
+	echo "Currently installed tools: $TOOLS"
+	for TOOL in "${TOOLS[@]}"; do
+		echo "Upgrading $TOOL"
+		asdf install "$TOOL" latest
+		asdf global "$TOOL" latest	
+	done
+	
+	echo "All tools upgraded!"
+}
+
+update() {
+	# upgrade all packages
+	brew upgrade -v --greedy
+	
+	# uninstall unused dependencies
+	brew autoremove -v
+	
+	# remove outdated downloads and old versions of packages 
+	brew cleanup -v --prune=all
+}
