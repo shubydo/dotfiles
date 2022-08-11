@@ -21,6 +21,7 @@ asdfupgrade() {
 		echo "Upgrading $TOOL"
 		asdf install "$TOOL" latest
 		asdf global "$TOOL" latest	
+		asdf reshim "$TOOL" latest	
 	done
 	
 	echo "All tools upgraded!"
