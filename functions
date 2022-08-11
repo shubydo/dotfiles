@@ -15,7 +15,7 @@ myip() {
 
 # Upgrade all versions of tools managed via asdf: https://github.com/asdf-vm/asdf
 asdfupgrade() {
-	TOOLS=$(asdf plugin list)
+	TOOLS=($(asdf plugin list))
 	echo "Currently installed tools: $TOOLS"
 	for TOOL in "${TOOLS[@]}"; do
 		echo "Upgrading $TOOL"
