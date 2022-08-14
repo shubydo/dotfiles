@@ -27,13 +27,17 @@ asdfupgrade() {
 	echo "All tools upgraded!"
 }
 
+
 update() {
-	# upgrade all packages
+	# Print in yellow blinking text
+	echo -e "\033[4;33mUpgrade all brew packages"
 	brew upgrade -v --greedy
 	
-	# uninstall unused dependencies
+	echo -e "\033[4;33mUinstall unused brew dependencies"
 	brew autoremove -v
 	
-	# remove outdated downloads and old versions of packages 
+	echo -e "\033[4;33mRemove outdated downloads and old versions of packages" 
 	brew cleanup -v --prune=all
+	
+	echo -e "\033[4;33mDone!"
 }
