@@ -15,18 +15,28 @@ myip() {
 
 # Upgrade all versions of tools managed via asdf: https://github.com/asdf-vm/asdf
 asdfupgrade() {
-	TOOLS=($(asdf plugin list))
-	echo "Currently installed tools: $TOOLS"
-	for TOOL in "${TOOLS[@]}"; do
-		echo "Upgrading $TOOL"
+	TOOLS=("$(asdf plugin-list)")
+	echo -e "\033[4:33mCurrently installed tools: $TOOLS"
+	for TOOL in "$TOOLS"; do
+		echo -e "\033[4;33mUpgrading $TOOL"
 		asdf install "$TOOL" latest
 		asdf global "$TOOL" latest	
 		asdf reshim "$TOOL" latest	
+		if [[ "$TOOL" -eq "golang" ]]; then
+			echo "Setting GOROOT after reshim"
+			echo "Before: GOROOT=$GOROOT"	
+			export GOROOT="$(asdf where golang)/go/"
+			echo "After: GOROOT=$GOROOT"	
+		fi
+
 	done
 	
+	echo "Re-shim Golang and set GOROOT"	
+	asdf reshim golang \
+	&&  export GOROOT="$(asdf where golang)/go/"	
+
 	echo "All tools upgraded!"
 }
-
 
 update() {
 	# Print in yellow blinking text
