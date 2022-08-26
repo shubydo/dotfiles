@@ -15,27 +15,27 @@ myip() {
 
 # Upgrade all versions of tools managed via asdf: https://github.com/asdf-vm/asdf
 asdfupgrade() {
-	TOOLS=("$(asdf plugin-list)")
-	echo -e "\033[4:33mCurrently installed tools: $TOOLS"
-	for TOOL in "$TOOLS"; do
-		echo -e "\033[4;33mUpgrading $TOOL"
+	TOOLS=""
+	TOOLS=($(asdf plugin list))
+	echo -e "\033[4;33mCurrently installed tools: ${TOOLS[*]}\033[0m"
+	for TOOL in "${TOOLS[@]}"; do
+		echo -e "\033[4;33mUpgrading $TOOL\033[0m"
 		asdf install "$TOOL" latest
 		asdf global "$TOOL" latest	
 		asdf reshim "$TOOL" latest	
-		if [[ "$TOOL" -eq "golang" ]]; then
+		if [[ "$TOOL" == "golang" ]]; then
 			echo "Setting GOROOT after reshim"
-			echo "Before: GOROOT=$GOROOT"	
+			echo "Before: GOROOT=$GOROOT"
+			go version
 			export GOROOT="$(asdf where golang)/go/"
+			# Alias for asdf reshim golang && golang latest
 			echo "After: GOROOT=$GOROOT"	
+			go version
 		fi
 
 	done
 	
-	echo "Re-shim Golang and set GOROOT"	
-	asdf reshim golang \
-	&&  export GOROOT="$(asdf where golang)/go/"	
-
-	echo "All tools upgraded!"
+	echo "\033[4:33mAll tools upgraded!"
 }
 
 update() {
@@ -51,3 +51,10 @@ update() {
 	
 	echo -e "\033[4;33mDone!"
 }
+
+kfile() {
+	# loop through different kubeconfigs in $HOME/.kube and prompt user to select one 
+
+	FILES=$(find -depth 0 "$HOME"/.kube)
+	CHOICE=$1
+}	
