@@ -52,9 +52,23 @@ update() {
 	echo -e "\033[4;33mDone!"
 }
 
+# KUBECONFIG
 kfile() {
-	# loop through different kubeconfigs in $HOME/.kube and prompt user to select one 
+    echo Available kubeconfigs:
+    files=($(find ~/.kube -type f -depth 1 | sort))
 
-	FILES=$(find -depth 0 "$HOME"/.kube)
-	CHOICE=$1
-}	
+    count=0
+    for file in ${files[@]}; do
+        filename=${file##*/}
+        echo "[${count}]: ${filename}"
+        count=$((count+1))
+    done
+
+    read choice
+    if [[ $choice -le $(($count - 1)) ]] && [[ $choice -ge 0 ]]; then
+        export KUBECONFIG=${files[@]:$choice:1}
+        echo "KUBECONFIG set to ${KUBECONFIG}"
+    else
+        echo "Invalid selection!"
+    fi
+}
