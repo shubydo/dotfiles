@@ -35,21 +35,21 @@ asdfupgrade() {
 
 	done
 	
-	echo "\033[4:33mAll tools upgraded!"
+	echo "\033[4:33mAll tools upgraded!\033[0m"
 }
 
 update() {
 	# Print in yellow blinking text
-	echo -e "\033[4;33mUpgrade all brew packages"
+	echo -e "\033[4;33mUpgrade all brew packages\033[0m"
 	brew upgrade -v --greedy
 	
-	echo -e "\033[4;33mUinstall unused brew dependencies"
+	echo -e "\033[4;33mUinstall unused brew dependencies\033[0m"
 	brew autoremove -v
 	
-	echo -e "\033[4;33mRemove outdated downloads and old versions of packages" 
+	echo -e "\033[4;33mRemove outdated downloads and old versions of packages\033[0m" 
 	brew cleanup -v --prune=all
 	
-	echo -e "\033[4;33mDone!"
+	echo -e "\033[4;33mDone!\033[0m"
 }
 
 # KUBECONFIG
