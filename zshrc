@@ -1,9 +1,11 @@
+# Fig pre block. Keep at the top of this file.
+[[ -f "$HOME/.fig/shell/zshrc.pre.zsh" ]] && . "$HOME/.fig/shell/zshrc.pre.zsh"
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
+# if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+#   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+# fi
 
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
@@ -77,7 +79,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(1password asdf aws brew gcloud git golang helm kubectl macos terraform zsh-autosuggestions)
+plugins=(1password asdf aws brew gcloud git gh helm macos taskwarrior terraform zsh-autosuggestions)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -119,11 +121,13 @@ source $ZSH/oh-my-zsh.sh
 
 export PATH="$PATH:$HOME/code/shell_scripts"
 
-
 # Go
-export GOPATH="$HOME/go"
-export GOROOT="$(brew --prefix golang)/libexec"
-export PATH="${PATH}:${GOPATH}/bin:${GOROOT}/bin"
+# export GOPATH="$HOME/go"
+# export GOROOT="$(brew --prefix golang)/libexec"
+# export PATH="${PATH}:${GOPATH}/bin:${GOROOT}/bin"
+
+# asdf golang reshim 
+alias go-reshim='asdf reshim golang && export GOROOT="$(asdf where golang)/go/"'
 
 # iTerm
 # Use random color for new tabs
@@ -136,7 +140,10 @@ function tabcolor {
 tabcolor $(jot -r 1 0 255) $(jot -r 1 0 255) $(jot -r 1 0 255)
 
 # Azure CLI
-autoload bashcompinit && bashcompinit
-source "$(brew --prefix az)/etc/bash_completion.d/az"
+# autoload bashcompinit && bashcompinit
+# source "$(brew --prefix az)/etc/bash_completion.d/az"
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+# Fig post block. Keep at the bottom of this file.
+[[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && . "$HOME/.fig/shell/zshrc.post.zsh"
