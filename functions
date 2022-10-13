@@ -72,3 +72,26 @@ kfile() {
         echo "Invalid selection!"
     fi
 }
+
+# AWS temp role assume
+function aws-assume-role(){
+	TMP_ROLE_ARN=$1
+
+	if [ -z "$TMP_ROLE_ARN" ]; then
+		echo "Usage: $0 <role-arn>"
+		exit 1
+	fi
+
+	unset AWS_PROFILE AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN 
+
+	TMP=$(aws sts assume-role \
+			--role-arn "$TMP_ROLE_ARN" \
+			--role-session-name "tmp")
+
+
+	export AWS_ACCESS_KEY_ID=$(echo "$TMP" | jq -r '.Credentials.AccessKeyId')
+	export AWS_SECRET_ACCESS_KEY=$(echo "$TMP" | jq -r '.Credentials.SecretAccessKey')
+	export AWS_SESSION_TOKEN=$(echo "$TMP" | jq  -r '.Credentials.SessionToken')
+
+	aws sts get-caller-identity | jq
+} 
