@@ -23,19 +23,9 @@ asdfupgrade() {
 		asdf install "$TOOL" latest
 		asdf global "$TOOL" latest	
 		asdf reshim "$TOOL" latest	
-		if [[ "$TOOL" == "golang" ]]; then
-			echo "Setting GOROOT after reshim"
-			echo "Before: GOROOT=$GOROOT"
-			go version
-			export GOROOT="$(asdf where golang)/go/"
-			# Alias for asdf reshim golang && golang latest
-			echo "After: GOROOT=$GOROOT"	
-			go version
-		fi
-
 	done
 	
-	echo "\033[4:33mAll tools upgraded!\033[0m"
+	echo "\033[4;33mAll tools upgraded!\033[0m"
 }
 
 update() {
