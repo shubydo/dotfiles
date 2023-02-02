@@ -77,6 +77,8 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Which plugins would you like to load?
 # Standard plugins can be found in $ZSH/plugins/
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
+# zsh-autosuggestions: git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(1password asdf aws brew gcloud git gh helm macos taskwarrior terraform zsh-autosuggestions)
@@ -126,15 +128,15 @@ export PATH="$PATH:$HOME/code/shell_scripts"
 # export GOROOT="$(brew --prefix golang)/libexec"
 # export PATH="${PATH}:${GOPATH}/bin:${GOROOT}/bin"
 
-# asdf golang reshim 
+# asdf golang reshim
 alias go-reshim='asdf reshim golang && export GOROOT="$(asdf where golang)/go/"'
 
 # iTerm
 # Use random color for new tabs
 function tabcolor {
-  echo -n -e "\033]6;1;bg;red;brightness;$1\a"
-  echo -n -e "\033]6;1;bg;green;brightness;$2\a"
-  echo -n -e "\033]6;1;bg;blue;brightness;$3\a"
+    echo -n -e "\033]6;1;bg;red;brightness;$1\a"
+    echo -n -e "\033]6;1;bg;green;brightness;$2\a"
+    echo -n -e "\033]6;1;bg;blue;brightness;$3\a"
 }
 
 tabcolor $(jot -r 1 0 255) $(jot -r 1 0 255) $(jot -r 1 0 255)
