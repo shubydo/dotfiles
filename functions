@@ -28,8 +28,8 @@ asdfupgrade() {
 	echo "\033[4;33mAll tools upgraded!\033[0m"
 }
 
-update() {
-	# Print in yellow blinking text
+# Upgrade all brew packages
+brewupgrade() {
 	echo -e "\033[4;33mUpgrade all brew packages\033[0m"
 	brew upgrade -v --greedy
 	
@@ -40,7 +40,35 @@ update() {
 	brew cleanup -v --prune=all
 	
 	echo -e "\033[4;33mDone!\033[0m"
+ }
+
+# Upgrade brew packages and languages installed via asdf
+upgrade() {
+	CYAN="36"
+	CYAN_BG="46"
+	
+	MAGENTA="35"
+	MAGENTA_BG="45"
+
+	CYAN_BOLD="\033[1;${CYAN}m"	
+	CYAN_BG_BOLD="\033[1;${CYAN_BG}m"	
+	
+	MAGENTA_BOLD="\033[1;${MAGENTA}m"	
+	MAGENTA_BG_BOLD="\033[1;${MAGENTA_BG}m"	
+
+	ENDCOLOR="\033[0m"
+
+	echo -e "${MAGENTA_BG_BOLD}Upgrade brew packages and languages installed via asdf${ENDCOLOR}"
+	echo -e "${CYAN_BOLD}BREW${ENDCOLOR}"
+	brewupgrade
+
+	
+	echo -e "${CYAN_BOLD}ASDF${ENDCOLOR}"
+	asdfupgrade
+
+	echo -e "${MAGENTA_BG_BOLD}Done!${ENDCOLOR}"
 }
+
 
 # KUBECONFIG
 kfile() {
