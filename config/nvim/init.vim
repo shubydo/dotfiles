@@ -28,12 +28,14 @@
 " Plugin Section
 call plug#begin(has('nvim') ? stdpath('data') . '/plugged' : '~/.vim/plugged')
  Plug 'dracula/vim'
+ Plug 'nvim-tree/nvim-tree.lua'
+ Plug 'nvim-tree/nvim-web-devicons'
+ Plug 'romgrk/barbar.nvim'
  Plug 'ryanoasis/vim-devicons'
+ Plug 'mhinz/vim-startify'
  Plug 'SirVer/ultisnips'
  Plug 'honza/vim-snippets'
- Plug 'scrooloose/nerdtree'
  Plug 'preservim/nerdcommenter'
- Plug 'mhinz/vim-startify'
  Plug 'neoclide/coc.nvim', {'branch': 'release'}
  Plug 'github/copilot.vim'
 call plug#end()
