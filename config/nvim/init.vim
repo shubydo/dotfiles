@@ -35,11 +35,7 @@ call plug#begin(has('nvim') ? stdpath('data') . '/plugged' : '~/.vim/plugged')
  Plug 'preservim/nerdcommenter'
  Plug 'mhinz/vim-startify'
  Plug 'neoclide/coc.nvim', {'branch': 'release'}
- Plug 'tpope/vim-sensible'
- Plug 'junegunn/seoul256.vim'
  Plug 'github/copilot.vim'
- Plug 'nvim-tree/nvim-web-devicons' " optional
- Plug 'nvim-tree/nvim-tree.lua'
 call plug#end()
 
 " " move line or visually selected block - alt+j/k
