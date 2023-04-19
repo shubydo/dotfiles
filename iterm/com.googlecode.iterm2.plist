@@ -611,13 +611,13 @@
 			<key>Mouse Reporting</key>
 			<true/>
 			<key>Name</key>
-			<string>main1</string>
+			<string>main</string>
 			<key>Non Ascii Font</key>
-			<string>Monaco 15</string>
+			<string>Monaco 13</string>
 			<key>Non-ASCII Anti Aliased</key>
 			<true/>
 			<key>Normal Font</key>
-			<string>MesloLGS-NF-Regular 19</string>
+			<string>MesloLGS-NF-Regular 17</string>
 			<key>Open Password Manager Automatically</key>
 			<false/>
 			<key>Option Key Sends</key>
