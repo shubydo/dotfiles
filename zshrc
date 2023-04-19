@@ -81,7 +81,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(1password asdf aws brew gcloud git gh helm macos taskwarrior terraform zsh-autosuggestions)
+plugins=(1password asdf aws brew gcloud git gh kubectl macos taskwarrior terraform zsh-autosuggestions)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -125,11 +125,11 @@ export PATH="$PATH:$HOME/code/shell_scripts"
 
 # Go
 # export GOPATH="$HOME/go"
-# export GOROOT="$(brew --prefix golang)/libexec"
-# export PATH="${PATH}:${GOPATH}/bin:${GOROOT}/bin"
+export GOROOT="$(asdf where golang)/go"
+export PATH="${PATH}:${GOPATH}/bin:${GOROOT}/bin"
 
 # asdf golang reshim
-alias go-reshim='asdf reshim golang && export GOROOT="$(asdf where golang)/go/"'
+alias go-reshim='asdf reshim golang && . ' # reshim and source shell
 
 # iTerm
 # Use random color for new tabs
