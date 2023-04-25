@@ -1,10 +1,11 @@
-# Aliases for common commands
+# General
 alias reload="source ~/.zshrc"
-alias zshrc="vim ~/.zshrc"
-alias aliases="vim ~/.aliases"
+alias v="$EDITOR" # nvim
+alias zshrc="$EDITOR ~/.zshrc"
+alias aliases="$EDITOR ~/.aliases"
+
+# Mac specific
 alias sed="gsed"
-alias v="vim"
-alias nv="nvim"
 
 # git
 alias ga="git add"
@@ -14,5 +15,5 @@ alias gcm="git commit -m"
 alias gs="git status"
 
 # asdf
-# GOROOT re-shim fix: https://github.com/kennyp/asdf-golang/issues/28#issuecomment-726189750
+# GOROOT re-shim fix: <https://github.com/kennyp/asdf-golang/issues/28#issuecomment-726189750>
 alias go-reshim="asdf reshim golang && reload"
