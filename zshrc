@@ -126,7 +126,10 @@ export PATH="$PATH:$HOME/code/shell_scripts"
 # Go
 # export GOPATH="$HOME/go"
 export GOROOT="$(asdf where golang)/go"
-export PATH="${PATH}:${GOPATH}/bin:${GOROOT}/bin"
+export PATH="${PATH}:$GOPATH/bin:$GOROOT/bin"
+
+# Goland
+export PATH="$PATH:/Applications/GoLand.app/Contents/MacOS"
 
 # asdf golang reshim
 alias go-reshim='asdf reshim golang && . ' # reshim and source shell
