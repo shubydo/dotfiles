@@ -1,6 +1,8 @@
 " NVIM CONFIGURATION: ~/.config/nvim/init.vim
 " https://builtin.com/software-engineering-perspectives/neovim-configuration
 :set nocompatible            " disable compatibility to old-time vi
+:set noswapfile             " disable creating swap file
+:set backupdir=~/.cache/vim " Directory to store backup files.
 :set showmatch               " show matching 
 :set ignorecase              " case insensitive 
 :set mouse=v                 " middle-click paste with 
@@ -22,8 +24,7 @@
 :set cursorline              " highlight current cursorline
 :set ttyfast                 " Speed up scrolling in Vim
 " set spell                  " enable spell check (may need to download language package)
-" set noswapfile             " disable creating swap file
-" set backupdir=~/.cache/vim " Directory to store backup files.
+
 
 " Plugin Section
 call plug#begin(has('nvim') ? stdpath('data') . '/plugged' : '~/.vim/plugged')
