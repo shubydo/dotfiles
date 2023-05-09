@@ -124,15 +124,15 @@ fi
 export PATH="$PATH:$HOME/code/shell_scripts"
 
 # Go
-# export GOPATH="$HOME/go"
-export GOROOT="$(asdf where golang)/go"
+export GOROOT="$(go env GOROOT)"
+export GOPATH="$(go env GOPATH)"
 export PATH="${PATH}:$GOPATH/bin:$GOROOT/bin"
 
 # Goland
 export PATH="$PATH:/Applications/GoLand.app/Contents/MacOS"
 
 # asdf golang reshim
-alias go-reshim='asdf reshim golang && . ' # reshim and source shell
+# alias go-reshim='asdf reshim golang && . ' # reshim and source shell
 
 # iTerm
 # Use random color for new tabs

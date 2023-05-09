@@ -1,8 +1,9 @@
 # General
-alias reload="source ~/.zshrc"
+alias reload="source $HOME/.zshrc"
 alias v="$EDITOR" # nvim
-alias zshrc="$EDITOR ~/.zshrc"
-alias aliases="$EDITOR ~/.aliases"
+alias zshrc="$EDITOR $HOME/.zshrc"
+alias aliases="$EDITOR $HOME/.aliases"
+alias nvimconfig="$EDITOR $HOME/.config/nvim/init.lua"
 
 # Mac specific
 alias sed="gsed"
