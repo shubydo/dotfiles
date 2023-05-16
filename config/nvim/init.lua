@@ -21,14 +21,22 @@ require('packer').startup(function(use)
   use 'vim-airline/vim-airline' -- Status line
   use 'vim-airline/vim-airline-themes' -- Status line themes
   use 'navarasu/onedark.nvim' -- Color scheme
+  -- Additional plugins
+  use 'ray-x/lsp_signature.nvim' -- function signatures
+  -- use 'ms-jpq/chadtree' -- directory tree navigation with filetype icons, git status, some other interesting things
+  use 'simrat39/symbols-outline.nvim' -- outline view for types/methods
+  use 'ray-x/navigator.lua' -- useful hotkeys like "go to definition", "show references", and jump to next/prev diagnostic
+  use 'akinsho/toggleterm.nvim' -- a pop-up terminal that you can dismiss and bring back
+  use 'lewis6991/gitsigns.nvim' -- signals uncommitted git changes, gives a cool way of seeing line-by-line blame, some other nice things)
+  use 'ms-jpq/coq_nvim' -- one of many completion plugins
+  use 'lukas-reineke/indent-blankline.nvim' -- I don't use this for Go but it's very helpful for working with YAML or Python
+  -- Copilot
   use 'github/copilot.vim'
 end)
 
 -- General settings
--- vim.opt.nocompatible = true
--- vim.opt.compatible = false
--- vim.opt.noswapfile = true
-
+vim.opt.compatible = false
+vim.opt.swapfile = false
 vim.opt.termguicolors = true
 vim.opt.number = true
 vim.opt.relativenumber = false
