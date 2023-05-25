@@ -97,7 +97,7 @@ function aws-assume-role(){
 
 	if [ -z "$TMP_ROLE_ARN" ]; then
 		echo "Usage: $0 <role-arn>"
-		exit 1
+		return 7
 	fi
 
 	unset AWS_PROFILE AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN 
