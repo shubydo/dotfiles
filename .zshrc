@@ -81,7 +81,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(1password asdf aws brew gcloud git gh go kubectl fzf macos taskwarrior terraform zsh-autosuggestions)
+plugins=(1password asdf aws brew gcloud git gh golang kubectl fzf macos taskwarrior terraform zsh-autosuggestions)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -136,10 +136,8 @@ export PATH="$PATH:/Applications/GoLand.app/Contents/MacOS"
 
 # iTerm
 
-# Specify the preferences directory
-defaults write com.googlecode.iterm2 PrefsCustomFolder -string "$HOME/dotfiles/System/iTerm/settings"
-
-# Tell iTerm2 to use the custom preferences in the directory
+# Specify the preferences directory to load from 
+defaults write com.googlecode.iterm2 PrefsCustomFolder -string "$HOME/dotfiles/iterm"
 defaults write com.googlecode.iterm2 LoadPrefsFromCustomFolder -bool true
 
 # Use random color for new tabs
