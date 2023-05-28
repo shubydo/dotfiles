@@ -81,7 +81,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(1password asdf aws brew gcloud git gh kubectl fzf macos taskwarrior terraform zsh-autosuggestions)
+plugins=(1password asdf aws brew gcloud git gh go kubectl fzf macos taskwarrior terraform zsh-autosuggestions)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -125,7 +125,7 @@ export PATH="$PATH:$HOME/code/shell_scripts"
 
 # Go
 export GOROOT="$(go env GOROOT)"
-export GOPATH="$(go env GOPATH)"
+export GOPATH="$HOME/go"
 export PATH="${PATH}:$GOPATH/bin:$GOROOT/bin"
 
 # Goland
@@ -135,6 +135,13 @@ export PATH="$PATH:/Applications/GoLand.app/Contents/MacOS"
 # alias go-reshim='asdf reshim golang && . ' # reshim and source shell
 
 # iTerm
+
+# Specify the preferences directory
+defaults write com.googlecode.iterm2 PrefsCustomFolder -string "$HOME/dotfiles/System/iTerm/settings"
+
+# Tell iTerm2 to use the custom preferences in the directory
+defaults write com.googlecode.iterm2 LoadPrefsFromCustomFolder -bool true
+
 # Use random color for new tabs
 function tabcolor {
     echo -n -e "\033]6;1;bg;red;brightness;$1\a"
@@ -143,6 +150,8 @@ function tabcolor {
 }
 
 tabcolor $(jot -r 1 0 255) $(jot -r 1 0 255) $(jot -r 1 0 255)
+
+
 
 # Azure CLI
 # autoload bashcompinit && bashcompinit
