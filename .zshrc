@@ -121,6 +121,11 @@ fi
 # Aliases
 [[ ! -f "$HOME/.aliases" ]] || source "$HOME/.aliases"
 
+# Copilot CLI aliases
+# https://www.npmjs.com/package/@githubnext/github-copilot-cli#setup-alias-convenience-commands
+eval "$(github-copilot-cli alias -- "$0")"
+
+# Shell Scripts
 export PATH="$PATH:$HOME/code/shell_scripts"
 
 # Go
