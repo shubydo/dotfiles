@@ -24,20 +24,14 @@ echo "----------------------------------"
 echo "Files to be linked: $FILES"
 echo "----------------------------------"
 
-# Show which files will be linked where if dry run
-if [ "$DRY_RUN" = true ]; then
-  for FILE in $FILES; do
-    SOURCE_FILE="$PWD/$FILE"
-		DEST_FILE="$HOME/$FILE"
-
-    echo "Dry run: Linking $SOURCE_FILE to $DEST_FILE"
-  done
-else
-	for FILE in $FILES; do
-    SOURCE_FILE="$PWD/$FILE"
-		DEST_FILE="$HOME/$FILE"
-
-		echo "Linking $SOURCE_FILE to $DEST_FILE"
-		ln -sfnv "$SOURCE_FILE" "$DEST_FILE"
-	done
-fi
+for FILE in $FILES; do
+  SOURCE_FILE="$PWD/$FILE"
+  DEST_FILE="$HOME/$FILE"
+  
+  if [ "$DRY_RUN" = true ]; then
+      echo "Dry run: Linking $SOURCE_FILE to $DEST_FILE"
+  else
+  	echo "Linking $SOURCE_FILE to $DEST_FILE"
+  	ln -sfnv "$SOURCE_FILE" "$DEST_FILE"
+  fi
+done
