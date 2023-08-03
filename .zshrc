@@ -132,6 +132,7 @@ export PATH="$PATH:$HOME/code/shell_scripts"
 export GOROOT="$(go env GOROOT)"
 export GOPATH="$HOME/go"
 export PATH="${PATH}:$GOPATH/bin:$GOROOT/bin"
+export ASDF_GOLANG_DEFAULT_PACKAGES_FILE="$HOME/dotfiles/.default-golang-pkgs" # default packages to install after asdf golang upgrade
 
 # Goland
 export PATH="$PATH:/Applications/GoLand.app/Contents/MacOS"
