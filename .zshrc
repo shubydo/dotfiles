@@ -128,11 +128,13 @@ eval "$(github-copilot-cli alias -- "$0")"
 # Shell Scripts
 export PATH="$PATH:$HOME/code/shell_scripts"
 
-# Go
-export GOROOT="$(go env GOROOT)"
-export GOPATH="$HOME/go"
-export PATH="${PATH}:$GOPATH/bin:$GOROOT/bin"
-export ASDF_GOLANG_DEFAULT_PACKAGES_FILE="$HOME/dotfiles/.default-golang-pkgs" # default packages to install after asdf golang upgrade
+# Go (asdf)
+[[ ! -f "$HOME/.asdf/plugins/golang/set-env.zsh" ]] || source "$HOME/.asdf/plugins/golang/set-env.zsh" 
+
+# non-asdf
+# export GOROOT="$(asdf where golang)/go"
+# export GOPATH="$HOME/go"
+# export PATH="${PATH}:$GOPATH/bin:$GOROOT/bin"
 
 # Goland
 export PATH="$PATH:/Applications/GoLand.app/Contents/MacOS"
