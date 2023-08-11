@@ -50,7 +50,7 @@ link() {
 setup_nvim() {
   echo "Setting up nvim"
 
-  REPO_NAME="shubydo/kikstart.nvim"
+  REPO_NAME="shubydo/kickstart.nvim"
   REPO_URL="https://github.com/$REPO_NAME"
   DEST_PATH="$HOME/.config/nvim"
 
