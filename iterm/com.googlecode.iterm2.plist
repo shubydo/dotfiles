@@ -642,7 +642,7 @@
 			<key>Normal Font</key>
 			<string>MesloLGS-NF-Regular 22</string>
 			<key>Open Password Manager Automatically</key>
-			<true/>
+			<false/>
 			<key>Option Key Sends</key>
 			<integer>2</integer>
 			<key>Prompt Before Closing 2</key>
