@@ -82,7 +82,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(1password asdf aws brew gcloud git gh golang kubectl fzf macos taskwarrior terraform zsh-autosuggestions)
+plugins=(asdf aws brew gcloud git gh kubectl fzf terraform zsh-autosuggestions osx)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -124,18 +124,23 @@ fi
 
 # Copilot CLI aliases
 # https://www.npmjs.com/package/@githubnext/github-copilot-cli#setup-alias-convenience-commands
-eval "$(github-copilot-cli alias -- "$0")"
+# eval "$(github-copilot-cli alias -- "$0")"
 
 # Shell Scripts
 export PATH="$PATH:$HOME/code/shell_scripts"
 
 # Go (asdf)
+# shellcheck disable=SC1091
 [[ ! -f "$HOME/.asdf/plugins/golang/set-env.zsh" ]] || source "$HOME/.asdf/plugins/golang/set-env.zsh" 
+
+# Use `go.mod` when determining Go version to use
+export ASDF_GOLANG_MOD_VERSION_ENABLED=true
 
 # non-asdf
 # export GOROOT="$(asdf where golang)/go"
 # export GOPATH="$HOME/go"
 # export PATH="${PATH}:$GOPATH/bin:$GOROOT/bin"
+# export GOPROXY="direct"
 
 # Goland
 export PATH="$PATH:/Applications/GoLand.app/Contents/MacOS"
