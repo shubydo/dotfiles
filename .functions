@@ -15,7 +15,6 @@ myip() {
 
 # Upgrade all versions of tools managed via asdf: https://github.com/asdf-vm/asdf
 asdfupgrade() {
-	TOOLS=""
 	TOOLS=($(asdf plugin list))
 	echo -e "\033[4;33mCurrently installed tools: ${TOOLS[*]}\033[0m"
 	for TOOL in "${TOOLS[@]}"; do
@@ -25,7 +24,7 @@ asdfupgrade() {
 		asdf reshim "$TOOL" latest	
 	done
 	
-	echo "\033[4;33mAll tools upgraded!\033[0m"
+	echo -e "\033[4;33mAll tools upgraded!\033[0m"
 }
 
 # Upgrade all brew packages
@@ -113,3 +112,19 @@ function aws-assume-role(){
 
 	aws sts get-caller-identity | jq
 } 
+
+# Mac Specific
+# Quickly toggles the function key settings on your Mac
+function togglefn() {
+	CURRENT_STATE=$(defaults read -g com.apple.keyboard.fnState) 
+	
+	if [[ "$CURRENT_STATE" -eq 0  ]]; then 
+		defaults write -g com.apple.keyboard.fnState -bool true
+	else 
+		defaults write -g com.apple.keyboard.fnState -bool false
+	fi
+
+	AFTER_STATE=$(defaults read -g com.apple.keyboard.fnState)
+	
+	echo "Function key setting toggled from $CURRENT_STATE to $AFTER_STATE"
+}
