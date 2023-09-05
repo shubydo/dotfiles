@@ -1,21 +1,26 @@
 # General
+
 alias reload="source $HOME/.zshrc"
 
 # Editor
+
 alias v="$EDITOR" # nvim
 alias vi="$EDITOR" # muscle memory
 alias n="$EDITOR"
 alias nv="$EDITOR"
 
 # Config
+
 alias zshrc="$EDITOR $HOME/.zshrc"
 alias aliases="$EDITOR $HOME/.aliases"
 alias nvimconfig="$EDITOR $HOME/.config/nvim/init.lua"
 
 # Mac specific
+
 alias sed="gsed"
 
 # git
+
 alias ga="git add"
 alias glog="git log"
 alias gcan="git commit --amend --no-edit"
@@ -23,5 +28,15 @@ alias gcm="git commit -m"
 alias gs="git status"
 
 # asdf
+
 # GOROOT re-shim fix: <https://github.com/kennyp/asdf-golang/issues/28#issuecomment-726189750>
+
 alias go-reshim="asdf reshim golang && reload"
+
+# Copilot CLI aliases
+
+# <https://www.npmjs.com/package/@githubnext/github-copilot-cli#setup-alias-convenience-commands>
+
+if [[ $(command -v github-copilot-cli) ]]; then
+  eval "$(github-copilot-cli alias -- "$0")"
+fi
