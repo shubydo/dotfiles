@@ -1,2 +1,3 @@
 github.com/cosmtrek/air@latest
 github.com/golangci/golangci-lint/cmd/golangci-lint@v1.53.3
+github.com/spf13/cobra@latest
