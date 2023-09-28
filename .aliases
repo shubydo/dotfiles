@@ -13,6 +13,8 @@ alias nv="$EDITOR"
 
 alias zshrc="$EDITOR $HOME/.zshrc"
 alias aliases="$EDITOR $HOME/.aliases"
+
+# github.com/shubydo/kickstart.nvim
 alias nvimconfig="$EDITOR $HOME/.config/nvim/init.lua"
 
 # Mac specific
