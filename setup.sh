@@ -63,8 +63,26 @@ setup_nvim() {
     fi
   else
     echo "Existing nvim config found"
+    if [[ "$DRY_RUN" == true ]]; then
+      echo "Dry run: git -C $DEST_PATH pull"
+    else
+    	git -C "$DEST_PATH" pull
+    fi
   fi  
 }
+
+# setup_spaceship() {
+# 	echo "Setting up spaceship prompt"
+# 
+# 	git clone https://github.com/spaceship-prompt/spaceship-prompt.git "$ZSH_CUSTOM/themes/spaceship-prompt" --depth=1
+# 	
+# 	# Symlink spaceship.zsh-theme to your oh-my-zsh custom themes directory:
+# 	if [[ "$DRY_RUN" == true ]]; then
+# 	  echo "Dry run: ln -sf $ZSH_CUSTOM/themes/spaceship-prompt/spaceship.zsh-theme $ZSH_CUSTOM/themes/spaceship.zsh-theme"
+# 	else 	
+# 	  ln -s "$ZSH_CUSTOM/themes/spaceship-prompt/spaceship.zsh-theme" "$ZSH_CUSTOM/themes/spaceship.zsh-theme"
+# 	fi
+# }
 
 # Parse command line options and print usage if -h is passed
 [[ $# -eq 0 ]] && display_usage
@@ -79,12 +97,14 @@ while getopts "hyn" OPTION; do
       PROMPT_BEFORE_OVERWRITE=false
       link
       setup_nvim
+ #      setup_spaceship
       exit 0
       ;;
     n)
       DRY_RUN=true
       link
       setup_nvim
+#       setup_spaceship
       exit 0
       ;;
     *)

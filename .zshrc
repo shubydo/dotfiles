@@ -10,6 +10,7 @@ export ZSH="$HOME/.oh-my-zsh"
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
 # https://spaceship-prompt.sh/getting-started/#Installing
 ZSH_THEME="spaceship"
+[[ ! -f "$HOME/.spaceship.zsh" ]] || source "$HOME/.spaceship.zsh"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
