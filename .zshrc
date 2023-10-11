@@ -74,7 +74,7 @@ ZSH_THEME="spaceship"
 
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(asdf aws brew gcloud git gh kubectl fzf terraform zsh-autosuggestions)
+plugins=(asdf aws brew docker gcloud git gh kubectl fzf terraform zsh-autosuggestions)
 
 source "$ZSH/oh-my-zsh.sh"
 
