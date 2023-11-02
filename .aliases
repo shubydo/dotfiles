@@ -2,10 +2,10 @@
 
 alias reload="source $HOME/.zshrc"
 
-# Editor
-
+# Editor (set in .zshrc)
 alias v="$EDITOR" # nvim
 alias vi="$EDITOR" # muscle memory
+alias vim="$EDITOR" # muscle memory
 alias n="$EDITOR"
 alias nv="$EDITOR"
 
@@ -13,6 +13,7 @@ alias nv="$EDITOR"
 
 alias zshrc="$EDITOR $HOME/.zshrc"
 alias aliases="$EDITOR $HOME/.aliases"
+alias omzconfig="$EDITOR $HOME/.oh-my-zsh"
 
 # github.com/shubydo/kickstart.nvim
 alias nvimconfig="$EDITOR $HOME/.config/nvim/init.lua"
