@@ -1,23 +1,29 @@
 #!/usr/bin/env bash
 
-DRY_RUN=true
-PROMPT_BEFORE_OVERWRITE=true
+# colors is a function that defines color variables for use in the remaining functions
+colors() {
+	CYAN="36"
+	CYAN_BG="46"
+	MAGENTA="35"
+	MAGENTA_BG="45"
+	CYAN_BOLD="\033[1;${CYAN}m"
+	CYAN_BG_BOLD="\033[1;${CYAN_BG}m"
+	MAGENTA_BOLD="\033[1;${MAGENTA}m"
+	MAGENTA_BG_BOLD="\033[1;${MAGENTA_BG}m"
+	ENDCOLOR="\033[0m"
+}
 
-display_usage() {
-  echo "Usage: setup.sh [-h] [-n] [-y]"
-  echo "  -h  Print this help message"
-  echo "  -n  Dry run: print what would be done without actually doing it"
-  echo "  -y  Do not prompt before overwriting files" 
-} 
 
+# Create symlinks to dotfiles in home directory
 link() {
 	# Create symlinks to dotfiles
 	# Grab all git tracked files in the current directory that are not on the IGNORE_LIST
 	# and create symlinks to them in the home directory
 	IGNORE_LIST="README.md .gitignore"
 	FILES=$(git ls-files | grep -v -e "$IGNORE_LIST")
-
-	echo "Linking files to home directory..."
+	
+	# Add colors to output
+	echo -e "${CYAN_BOLD}Creating symlinks to dotfiles in ${HOME} directory${ENDCOLOR}"
 	echo "----------------------------------"
 	echo "Files to be linked: $FILES"
 	echo "----------------------------------"
@@ -48,11 +54,11 @@ link() {
 
 # setup personal fork of nvim-lua/kickstart.nvim 
 setup_nvim() {
-  echo "Setting up nvim"
-
   REPO_NAME="shubydo/kickstart.nvim"
   REPO_URL="https://github.com/$REPO_NAME"
   DEST_PATH="$HOME/.config/nvim"
+  
+  echo -e "${MAGENTA_BOLD}Setting up nvim config${ENDCOLOR}" 
 
   if [[ ! -d "$DEST_PATH" ]]; then
     echo "No existing nvim config found in $DEST_PATH"
@@ -84,9 +90,24 @@ setup_nvim() {
 # 	fi
 # }
 
+
+
+display_usage() {
+  echo "Usage: setup.sh [-h] [-i] [-d] [-y]"
+  echo "  -h  Print this help message"
+  echo "  -i  Interactive: prompt before creating symlinks to dotfiles in home directory"
+  echo "  -d  Dry run: print what would be done without actually doing it"
+  echo "  -y  Do not prompt before creating or overwriting symlinks" 
+  echo "  -n  nvim: setup nvim config only"
+} 
+
+DRY_RUN=false # -n flag
+PROMPT_BEFORE_OVERWRITE=true # -y flag
+colors
+
 # Parse command line options and print usage if -h is passed
 [[ $# -eq 0 ]] && display_usage
-while getopts "hyn" OPTION; do
+while getopts "hydin" OPTION; do
   case "$OPTION" in
     h)
       display_usage
@@ -100,13 +121,22 @@ while getopts "hyn" OPTION; do
  #      setup_spaceship
       exit 0
       ;;
-    n)
-      DRY_RUN=true
+    i)
       link
       setup_nvim
 #       setup_spaceship
       exit 0
       ;;
+    d | --dry-run)
+	DRY_RUN=true
+	link
+	setup_nvim
+	exit 0
+	;;
+    n)
+	setup_nvim
+	exit 0
+	;;
     *)
       display_usage
       echo "Invalid option: -$OPTARG" >&2
