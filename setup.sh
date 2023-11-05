@@ -90,7 +90,47 @@ setup_nvim() {
 # 	fi
 # }
 
+setup_ohmyzsh() {
+  OMZ_SCRIPT="https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh" 
+  SCRIPT_PATH="omz_install.sh"
+  # CUSTOM_OMZ_ZSH_PATH="$HOME/dotfiles/oh-my-zsh"
+  CUSTOM_OMZ_ZSH_PATH="$HOME/.oh-my-zsh" # set to ZSH env var to control install location
 
+  echo -e "${DRY_RUN_MSG}${CYAN}Setting up oh-my-zsh${ENDCOLOR}"
+
+  # Don't let install run if ZSH env var is already set and has value that does not match custom location 
+  # (ex: .zshrc, or program set externally) 
+  if [[ "$ZSH" != "$CUSTOM_OMZ_ZSH_PATH" ]]; then
+    echo "ZSH already set!: $ZSH"
+    echo "Must be set to $CUSTOM_OMZ_ZSH_PATH"
+    exit 1
+  fi
+  export ZSH="$CUSTOM_OMZ_ZSH_PATH"
+  
+  download() {
+      echo -e "Checking if using latest install script"
+      curl -fsSL "$CUSTOM_OMZ_ZSH_PATH" -o "$DEST_PATH" 
+    
+      IS_LATEST=$(git diff $DEST_PATH)
+      echo "Latest script?: $IS_LATEST"
+      if [[ -z "$IS_LATEST" ]]; then
+	echo "Using latest!"
+      else
+      	echo -e "${WARNING_YELLOW} script downloaded does not match current version. It is recommended to commit changes before proceeding with install ${ENDCOLOR}"
+
+	echo 'git add $SCRIPT_PATH && git commit -m "chore(omz): update install script"'
+      fi
+  }
+
+  
+  [[ ! -d "$CUSTOM_OMZ_ZSH_PATH" ]] || echo "No existing oh-my-zsh config found in $DEST_PATH"
+  if [[ "$DRY_RUN" == true ]]; then
+    echo 'Dry run: sh "$SCRIPT_PATH"'
+  else
+    download && sh "$SCRIPT_PATH"
+      # sh "$SCRIPT_PATH"	 
+  fi
+}
 
 display_usage() {
   echo "Usage: setup.sh [-h] [-i] [-d] [-y]"
@@ -101,8 +141,11 @@ display_usage() {
   echo "  -n  nvim: setup nvim config only"
 } 
 
+
 DRY_RUN=false # -n flag
+DRY_RUN_MSG=
 PROMPT_BEFORE_OVERWRITE=true # -y flag
+
 colors
 
 # Parse command line options and print usage if -h is passed
@@ -117,23 +160,28 @@ while getopts "hydin" OPTION; do
       DRY_RUN=false
       PROMPT_BEFORE_OVERWRITE=false
       link
+      setup_ohmyzsh
       setup_nvim
  #      setup_spaceship
       exit 0
       ;;
     i)
       link
+      setup_ohmyzsh
       setup_nvim
 #       setup_spaceship
       exit 0
       ;;
     d | --dry-run)
 	DRY_RUN=true
+	DRY_RUN_MSG="Dry run: "
+
 	link
+	setup_ohmyzsh
 	setup_nvim
 	exit 0
 	;;
-    n)
+    n | --nvim)
 	setup_nvim
 	exit 0
 	;;
