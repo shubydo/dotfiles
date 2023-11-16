@@ -287,7 +287,7 @@
 			<key>Guid</key>
 			<string>E0DA002C-2B05-4A36-97DE-C2B8F4CFC53C</string>
 			<key>Has Hotkey</key>
-			<false/>
+			<true/>
 			<key>Horizontal Spacing</key>
 			<real>1</real>
 			<key>HotKey Activated By Modifier</key>
@@ -775,7 +775,7 @@
 	<key>SeparateStatusBarsPerPane</key>
 	<true/>
 	<key>ShowFullScreenTabBar</key>
-	<true/>
+	<false/>
 	<key>ShowPaneTitles</key>
 	<true/>
 	<key>Size Changes Affect Profile</key>
