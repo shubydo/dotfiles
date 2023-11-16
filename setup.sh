@@ -4,6 +4,7 @@ set -euo pipefail
 
 # colors is a function that defines color variables for use in the remaining functions
 colors() {
+  # shellcheck disable=SC2034  # Unused variables left for readability
   CYAN="36"
   CYAN_BG="46"
   CYAN_BOLD="\033[1;${CYAN}m"
@@ -12,22 +13,22 @@ colors() {
   MAGENTA="35"
   MAGENTA_BG="45"
   MAGENTA_BOLD="\033[1;${MAGENTA}m"
-  MAGENTA_BG_BOLD="\033[1;${MAGENTA_BG}m"
+  _MAGENTA_BG_BOLD="\033[1;${MAGENTA_BG}m"
 
   WARNING_YELLOW="33"
   WARNING_YELLOW_BG="43"
-  WARNING_YELLOW_BOLD="\033[1;${WARNING_YELLOW}m"
-  WARNING_YELLOW_BG_BOLD="\033[1;${WARNING_YELLOW_BG}m"
+  _WARNING_YELLOW_BOLD="\033[1;${WARNING_YELLOW}m"
+  _WARNING_YELLOW_BG_BOLD="\033[1;${WARNING_YELLOW_BG}m"
 
   RED="31"
   RED_BG="41"
-  RED_BOLD="\033[1;${RED}m"
-  RED_BG_BOLD="\033[1;${RED_BG}m"
+  _RED_BOLD="\033[1;${RED}m"
+  _RED_BG_BOLD="\033[1;${RED_BG}m"
 
   GREEN="32"
   GREEN_BG="42"
-  GREEN_BOLD="\033[1;${GREEN}m"
-  GREEN_BG_BOLD="\033[1;${GREEN_BG}m"
+  _GREEN_BOLD="\033[1;${GREEN}m"
+  _GREEN_BG_BOLD="\033[1;${GREEN_BG}m"
 
   ENDCOLOR="\033[0m"
 }
@@ -84,7 +85,7 @@ link() {
 # setup personal fork of nvim-lua/kickstart.nvim
 setup_nvim() {
   REPO_NAME="shubydo/kickstart.nvim"
-  REPO_URL="https://github.com/$REPO_NAME"
+  REPO_URL="https://github.com/$REPO_NAME.git"
   DEST_PATH="$HOME/.config/nvim"
 
   echo -e "${MAGENTA_BOLD}Setting up nvim config${ENDCOLOR}"
@@ -138,21 +139,21 @@ setup_ohmyzsh() {
 
   download() {
     echo -e "Checking if using latest install script"
-    curl -L -v "$CUSTOM_OMZ_ZSH_PATH" -o "$DEST_PATH"
+    curl -L -v "$OMZ_SCRIPT" -o "$SCRIPT_PATH"
 
-    IS_LATEST=$(git diff $DEST_PATH)
+    IS_LATEST=$(git diff $SCRIPT_PATH)
     echo "Latest script?: $IS_LATEST"
     if [[ -z "$IS_LATEST" ]]; then
       echo "Using latest!"
     else
       echo -e "${WARNING_YELLOW} script downloaded does not match current version. It is recommended to commit changes before proceeding with install ${ENDCOLOR}"
-      echo 'git add $SCRIPT_PATH && git commit -m "chore(omz): update install script"'
+      echo -e "git add $SCRIPT_PATH && git commit -m 'chore(omz): update install script'"
     fi
   }
 
   [[ ! -d "$CUSTOM_OMZ_ZSH_PATH" ]] || echo "No existing oh-my-zsh config found in $CUSTOM_OMZ_ZSH_PATH"
   if [[ "$DRY_RUN" == true ]]; then
-    echo 'Dry run: sh "$SCRIPT_PATH"'
+    echo "Dry run: sh $SCRIPT_PATH"
   else
     download && sh "$SCRIPT_PATH"
     # sh "$SCRIPT_PATH"
@@ -214,5 +215,4 @@ while [[ $# -gt 0 ]]; do
     exit 1
     ;;
   esac
-  shift
 done
