@@ -138,8 +138,10 @@ export PATH="$PATH:$(go env GOPATH)/bin"
 # export ASDF_GOLANG_MOD_VERSION_ENABLED=true
 
 # Goland
-export PATH="$PATH:/Applications/GoLand.app/Contents/MacOS"
-
+# Set path to Goland binary if on Mac
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  export PATH="$PATH:/Applications/GoLand.app/Contents/MacOS"
+fi
 
 # Yarn (asdf)
 # shellcheck disable=SC1091
@@ -149,8 +151,20 @@ export PATH="$PATH:/Applications/GoLand.app/Contents/MacOS"
 # autoload bashcompinit && bashcompinit
 # source "$(brew --prefix az)/etc/bash_completion.d/az"
 
+# iTerm
+# Use random color for new tabs in iTerm
+if [[ "$TERM_PROGRAM" == "iTerm.app" ]]; then
+  tabcolor(){
+    echo -n -e "\033]6;1;bg;red;brightness;$1\a"
+    echo -n -e "\033]6;1;bg;green;brightness;$2\a"
+    echo -n -e "\033]6;1;bg;blue;brightness;$3\a"
+}
+
+  tabcolor $(jot -r 1 0 255) $(jot -r 1 0 255) $(jot -r 1 0 255)
+fi
+
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+[[ ! -f "$HOME/.p10k.zsh"]] || source "$HOME/.p10k.zsh"
 
 # Fig post block. Keep at the bottom of this file.
 [[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.post.zsh"
