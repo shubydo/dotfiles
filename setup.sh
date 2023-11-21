@@ -13,22 +13,22 @@ colors() {
   MAGENTA="35"
   MAGENTA_BG="45"
   MAGENTA_BOLD="\033[1;${MAGENTA}m"
-  _MAGENTA_BG_BOLD="\033[1;${MAGENTA_BG}m"
+  MAGENTA_BG_BOLD="\033[1;${MAGENTA_BG}m"
 
   WARNING_YELLOW="33"
   WARNING_YELLOW_BG="43"
-  _WARNING_YELLOW_BOLD="\033[1;${WARNING_YELLOW}m"
-  _WARNING_YELLOW_BG_BOLD="\033[1;${WARNING_YELLOW_BG}m"
+  WARNING_YELLOW_BOLD="\033[1;${WARNING_YELLOW}m"
+  WARNING_YELLOW_BG_BOLD="\033[1;${WARNING_YELLOW_BG}m"
 
   RED="31"
   RED_BG="41"
-  _RED_BOLD="\033[1;${RED}m"
-  _RED_BG_BOLD="\033[1;${RED_BG}m"
+  RED_BOLD="\033[1;${RED}m"
+  RED_BG_BOLD="\033[1;${RED_BG}m"
 
   GREEN="32"
   GREEN_BG="42"
-  _GREEN_BOLD="\033[1;${GREEN}m"
-  _GREEN_BG_BOLD="\033[1;${GREEN_BG}m"
+  GREEN_BOLD="\033[1;${GREEN}m"
+  GREEN_BG_BOLD="\033[1;${GREEN_BG}m"
 
   ENDCOLOR="\033[0m"
 }
@@ -70,14 +70,14 @@ link() {
       if [[ "$DRY_RUN" == false && "$PROMPT_BEFORE_OVERWRITE" == true && -f "$DEST_FILE" ]]; then
         read -p "File $DEST_FILE already exists. Overwrite? (y/n) " -n 1 -r
         echo
-        if [[ $REPLY =~ ^[Yy]$ ]]; then
-          rm -rfv "$DEST_FILE"
-        else
-          echo "Skipping $DEST_FILE"
+        # if reply is not y or Y, skip this file
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+          echo "Skipping $FILE"
           continue
         fi
       fi
-      ln -sfv "$SOURCE_FILE" "$DEST_FILE"
+      ln -sf "$SOURCE_FILE" "$DEST_FILE"
+      # ln -sfv "$SOURCE_FILE" "$DEST_FILE"
     fi
   done
 }
@@ -126,7 +126,7 @@ setup_ohmyzsh() {
   # CUSTOM_OMZ_ZSH_PATH="$HOME/dotfiles/oh-my-zsh"
   CUSTOM_OMZ_ZSH_PATH="$HOME/.oh-my-zsh" # set to ZSH env var to control install location
 
-  echo -e "${DRY_RUN_MSG}${CYAN}Setting up oh-my-zsh${ENDCOLOR}"
+  echo -e "${CYAN_BOLD}Setting up oh-my-zsh${ENDCOLOR}"
 
   # Don't let install run if ZSH env var is already set and has value that does not match custom location
   # (ex: .zshrc, or program set externally)
@@ -135,22 +135,23 @@ setup_ohmyzsh() {
     echo "Must be set to $CUSTOM_OMZ_ZSH_PATH"
     exit 1
   fi
-  export ZSH="$CUSTOM_OMZ_ZSH_PATH"
+  # export ZSH="$CUSTOM_OMZ_ZSH_PATH"
 
   download() {
-    echo -e "Checking if using latest install script"
-    curl -L -v "$OMZ_SCRIPT" -o "$SCRIPT_PATH"
+    echo -e "Checking if using latest install script: $OMZ_SCRIPT"
+    curl -fSsL "$OMZ_SCRIPT" -o "$SCRIPT_PATH" && chmod +x "$SCRIPT_PATH"
 
     IS_LATEST=$(git diff $SCRIPT_PATH)
-    echo "Latest script?: $IS_LATEST"
     if [[ -z "$IS_LATEST" ]]; then
-      echo "Using latest!"
+      echo "Using latest version of script!"
     else
       echo -e "${WARNING_YELLOW} script downloaded does not match current version. It is recommended to commit changes before proceeding with install ${ENDCOLOR}"
       echo -e "git add $SCRIPT_PATH && git commit -m 'chore(omz): update install script'"
     fi
   }
 
+  # TODO: handle oh-my-zsh config error from install script: The $ZSH folder already exists (/home/shubydo/.oh-my-zsh).
+  # ...$ZSH setting or the $ZSH variable is exported.
   [[ ! -d "$CUSTOM_OMZ_ZSH_PATH" ]] || echo "No existing oh-my-zsh config found in $CUSTOM_OMZ_ZSH_PATH"
   if [[ "$DRY_RUN" == true ]]; then
     echo "Dry run: sh $SCRIPT_PATH"
@@ -158,61 +159,115 @@ setup_ohmyzsh() {
     download && sh "$SCRIPT_PATH"
     # sh "$SCRIPT_PATH"
   fi
+
+  setup_powerlevel10k
+}
+
+setup_powerlevel10k() {
+  echo -e "${CYAN_BOLD}Setting up powerlevel10k${ENDCOLOR}"
+
+  # if omz not installed, exit
+  if [[ ! $(command -v omz) ]]; then
+    echo "oh-my-zsh not installed. Run setup_ohmyzsh first"
+    exit 1
+  fi
+
+  DEST_PATH="${ZSH_CUSTOM:-$ZSH/custom}/themes/powerlevel10k"
+
+  # Clone powerlevel10k theme
+  if [[ ! -d "$DEST_PATH" ]]; then
+    echo "No existing powerlevel10k theme found in $DEST_PATH"
+  fi
+
+  if [[ "$DRY_RUN" == true ]]; then
+    echo "Dry run: git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $DEST_PATH"
+  else
+    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$DEST_PATH"
+  fi
 }
 
 # Display usage information with short and long options
 display_usage() {
   echo -e "${CYAN_BOLD}Usage: $0 [-h] [-i] [-d] [-n] [-y]${ENDCOLOR}"
+  echo "  Options: "
   echo "  -h, --help        Display this help message"
-  echo "  -i, --interactive Create symlinks to dotfiles in home directory and setup oh-my-zsh"
-  echo "  -d, --dry-run     Print what would be done without actually doing it"
+  echo "  -d, --dry-run     Print what would be done without actually doing it."
+  echo "  -i, --interactive Enable prompts before overwriting symlinks"
+  echo "  -y, --yes, --no-prompt   Do not prompt before creating or overwriting symlinks"
   echo "  -n, --nvim        Setup nvim config only"
-  echo "  -y, --no-prompt   Do not prompt before creating or overwriting symlinks"
+  echo "  -z, --zsh         Setup zsh: oh-my-zsh + theme"
 }
 
-DRY_RUN=false # -n flag
-DRY_RUN_MSG=
-PROMPT_BEFORE_OVERWRITE=true # -y flag
+# Set default values for flags
+PROMPT_BEFORE_OVERWRITE=true # -i flag
+DRY_RUN=false                # - d flag
+DRY_RUN_MSG=""
 
 # Setup colors for shell output
 colors
 
-while [[ $# -gt 0 ]]; do
-  case "$1" in
+# Parse command line options. If --help flag is present, display usage and exit
+
+if [[ "$#" -eq 0 ]]; then
+  display_usage
+  exit 0
+fi
+
+# Parse command line options. If --help flag is present, display usage and exit
+# Or if dry run flag is present, print what would be done without actually doing it
+
+# If --help flag is present, display usage no matter what other flags are present
+if [[ "$*" == *--help* ]] || [[ "$*" == *-h* ]]; then
+  display_usage
+  exit 0
+fi
+
+# If --dry-run flag is present, print what would be done without actually doing it
+if [[ "$*" == *--dry-run* ]] || [[ "$*" == *-d* ]]; then
+  DRY_RUN=true
+  DRY_RUN_MSG="${WARNING_YELLOW}Dry run: ${ENDCOLOR}"
+fi
+
+while [[ "$#" -gt 0 ]]; do
+  case $1 in
   -h | --help)
     display_usage
     exit 0
     ;;
+  # -d | --dry-run)
+  #   DRY_RUN=true
+  #   DRY_RUN_MSG="${WARNING_YELLOW}Dry run: ${ENDCOLOR}"
+  #   ;;
   -i | --interactive)
     PROMPT_BEFORE_OVERWRITE=true
     link
-    setup_ohmyzsh
     setup_nvim
+    setup_ohmyzsh
+    setup_powerlevel10k
     exit 0
     ;;
-  -d | --dry-run)
-    DRY_RUN=true
-    DRY_RUN_MSG="Dry run: "
+  -y | --yes | --no-prompt)
+    PROMPT_BEFORE_OVERWRITE=false
     link
-    setup_ohmyzsh
     setup_nvim
+    setup_ohmyzsh
+    setup_powerlevel10k
     exit 0
     ;;
   -n | --nvim)
     setup_nvim
     exit 0
     ;;
-  -y | --no-prompt)
-    PROMPT_BEFORE_OVERWRITE=false
-    link
+  -z | --zsh)
     setup_ohmyzsh
-    setup_nvim
+    setup_powerlevel10k
     exit 0
     ;;
   *)
+    echo "Unknown parameter passed: $1"
     display_usage
-    echo "Invalid option: $1" >&2
     exit 1
     ;;
   esac
+  shift
 done
