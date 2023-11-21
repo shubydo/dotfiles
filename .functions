@@ -1,16 +1,16 @@
-# Decode JWT and print in readable format to console. 
+# Decode JWT and print in readable format to console.
 # Usage: jwtd <MY_JWT>
 jwtd() {
-    if [[ -x $(command -v jq) ]]; then
-         jq -R 'split(".") | .[0],.[1] | @base64d | fromjson' <<< "${1}"
-         echo "Signature: $(echo "${1}" | awk -F'.' '{print $3}')"
-    fi
+	if [[ -x $(command -v jq) ]]; then
+		jq -R 'split(".") | .[0],.[1] | @base64d | fromjson' <<<"${1}"
+		echo "Signature: $(echo "${1}" | awk -F'.' '{print $3}')"
+	fi
 }
 
 # Get current IP and copy to clipboard (Mac specific)
 myip() {
 	curl -fSsL ifconfig.me | pbcopy
-        echo "Current IP: $(pbpaste)"
+	echo "Current IP: $(pbpaste)"
 }
 
 # Upgrade all versions of tools managed via asdf: https://github.com/asdf-vm/asdf
@@ -20,10 +20,10 @@ asdfupgrade() {
 	for TOOL in "${TOOLS[@]}"; do
 		echo -e "\033[4;33mUpgrading $TOOL\033[0m"
 		asdf install "$TOOL" latest
-		asdf global "$TOOL" latest	
-		asdf reshim "$TOOL" latest	
+		asdf global "$TOOL" latest
+		asdf reshim "$TOOL" latest
 	done
-	
+
 	echo -e "\033[4;33mAll tools upgraded!\033[0m"
 }
 
@@ -31,29 +31,29 @@ asdfupgrade() {
 brewupgrade() {
 	echo -e "\033[4;33mUpgrade all brew packages\033[0m"
 	brew upgrade -v --greedy
-	
+
 	echo -e "\033[4;33mUinstall unused brew dependencies\033[0m"
 	brew autoremove -v
-	
-	echo -e "\033[4;33mRemove outdated downloads and old versions of packages\033[0m" 
+
+	echo -e "\033[4;33mRemove outdated downloads and old versions of packages\033[0m"
 	brew cleanup -v --prune=all
-	
+
 	echo -e "\033[4;33mDone!\033[0m"
- }
+}
 
 # Upgrade brew packages and languages installed via asdf
 upgrade() {
 	CYAN="36"
 	CYAN_BG="46"
-	
+
 	MAGENTA="35"
 	MAGENTA_BG="45"
 
-	CYAN_BOLD="\033[1;${CYAN}m"	
-	CYAN_BG_BOLD="\033[1;${CYAN_BG}m"	
-	
-	MAGENTA_BOLD="\033[1;${MAGENTA}m"	
-	MAGENTA_BG_BOLD="\033[1;${MAGENTA_BG}m"	
+	CYAN_BOLD="\033[1;${CYAN}m"
+	CYAN_BG_BOLD="\033[1;${CYAN_BG}m"
+
+	MAGENTA_BOLD="\033[1;${MAGENTA}m"
+	MAGENTA_BG_BOLD="\033[1;${MAGENTA_BG}m"
 
 	ENDCOLOR="\033[0m"
 
@@ -61,70 +61,68 @@ upgrade() {
 	echo -e "${CYAN_BOLD}BREW${ENDCOLOR}"
 	brewupgrade
 
-	
 	echo -e "${CYAN_BOLD}ASDF${ENDCOLOR}"
 	asdfupgrade
 
 	echo -e "${MAGENTA_BG_BOLD}Done!${ENDCOLOR}"
 }
 
-
 # KUBECONFIG
 kfile() {
-    echo Available kubeconfigs:
-    files=($(find ~/.kube -type f -depth 1 | sort))
+	echo Available kubeconfigs:
+	files=($(find ~/.kube -type f -depth 1 | sort))
 
-    count=0
-    for file in ${files[@]}; do
-        filename=${file##*/}
-        echo "[${count}]: ${filename}"
-        count=$((count+1))
-    done
+	count=0
+	for file in ${files[@]}; do
+		filename=${file##*/}
+		echo "[${count}]: ${filename}"
+		count=$((count + 1))
+	done
 
-    read choice
-    if [[ $choice -le $(($count - 1)) ]] && [[ $choice -ge 0 ]]; then
-        export KUBECONFIG=${files[@]:$choice:1}
-        echo "KUBECONFIG set to ${KUBECONFIG}"
-    else
-        echo "Invalid selection!"
-    fi
+	read choice
+	if [[ $choice -le $(($count - 1)) ]] && [[ $choice -ge 0 ]]; then
+		export KUBECONFIG=${files[@]:$choice:1}
+		echo "KUBECONFIG set to ${KUBECONFIG}"
+	else
+		echo "Invalid selection!"
+	fi
 }
 
 # AWS temp role assume
-function aws-assume-role(){
-	TMP_ROLE_ARN=$1
+# shellcheck disable=SC2155
+function aws-assume-role() {
+	TMP_ROLE_ARN="$1"
 
-	if [ -z "$TMP_ROLE_ARN" ]; then
+	if [[ -z "$TMP_ROLE_ARN" ]]; then
 		echo "Usage: $0 <role-arn>"
 		return 7
 	fi
 
-	unset AWS_PROFILE AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN 
+	unset AWS_PROFILE AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN
 
 	TMP=$(aws sts assume-role \
-			--role-arn "$TMP_ROLE_ARN" \
-			--role-session-name "tmp")
-
+		--role-arn "$TMP_ROLE_ARN" \
+		--role-session-name "tmp")
 
 	export AWS_ACCESS_KEY_ID=$(echo "$TMP" | jq -r '.Credentials.AccessKeyId')
 	export AWS_SECRET_ACCESS_KEY=$(echo "$TMP" | jq -r '.Credentials.SecretAccessKey')
-	export AWS_SESSION_TOKEN=$(echo "$TMP" | jq  -r '.Credentials.SessionToken')
+	export AWS_SESSION_TOKEN=$(echo "$TMP" | jq -r '.Credentials.SessionToken')
 
 	aws sts get-caller-identity | jq
-} 
+}
 
 # Mac Specific
 # Quickly toggles the function key settings on your Mac
 function togglefn() {
-	CURRENT_STATE=$(defaults read -g com.apple.keyboard.fnState) 
-	
-	if [[ "$CURRENT_STATE" -eq 0  ]]; then 
+	CURRENT_STATE=$(defaults read -g com.apple.keyboard.fnState)
+
+	if [[ "$CURRENT_STATE" -eq 0 ]]; then
 		defaults write -g com.apple.keyboard.fnState -bool true
-	else 
+	else
 		defaults write -g com.apple.keyboard.fnState -bool false
 	fi
 
 	AFTER_STATE=$(defaults read -g com.apple.keyboard.fnState)
-	
+
 	echo "Function key setting toggled from $CURRENT_STATE to $AFTER_STATE"
 }

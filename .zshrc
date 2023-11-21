@@ -1,5 +1,5 @@
 # Fig pre block. Keep at the top of this file.
-[[ -f "$HOME/.fig/shell/zshrc.pre.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.pre.zsh"
+# [[ -f "$HOME/.fig/shell/zshrc.pre.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.pre.zsh"
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
@@ -22,7 +22,7 @@ export ZSH="$HOME/.oh-my-zsh"
 # ZSH_THEME="spaceship"
 # [[ ! -f "$HOME/.spaceship.zsh" ]] || source "$HOME/.spaceship.zsh"
 ZSH_THEME="powerlevel10k/powerlevel10k"
-[[ ! -f "$HOME/.p10k.zsh" ]] || source "$HOME/.p10k.zsh"
+# [[ ! -f "$HOME/.p10k.zsh" ]] || source "$HOME/.p10k.zsh"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -86,7 +86,16 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(asdf aws brew docker gcloud git gh kubectl fzf terraform zsh-autosuggestions)
+plugins=(
+  asdf
+  aws
+  brew
+  docker 
+  git
+  gh 
+  fzf 
+  zsh-autosuggestions
+)
 
 source "$ZSH/oh-my-zsh.sh"
 
@@ -126,30 +135,26 @@ fi
 # Shell Scripts
 export PATH="$PATH:$HOME/code/shell_scripts"
 
-# Go (asdf)
+# ASDF
+# Go
+# "$HOME/.asdf/plugins/golang/set-env.zsh"  does not add GOBIN to path
 export GOPATH="$(asdf where golang)/packages"
 export GOROOT="$(asdf where golang)/go"
 export PATH="$PATH:$(go env GOPATH)/bin"
 
-# shellcheck disable=SC1091
-# [[ ! -f "$HOME/.asdf/plugins/golang/set-env.zsh" ]] || source "$HOME/.asdf/plugins/golang/set-env.zsh" 
-
 # Use `go.mod` when determining Go version to use
 # export ASDF_GOLANG_MOD_VERSION_ENABLED=true
 
-# Goland
-# Set path to Goland binary if on Mac
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  export PATH="$PATH:/Applications/GoLand.app/Contents/MacOS"
-fi
-
-# Yarn (asdf)
+# Yarn
 # shellcheck disable=SC1091
 [[ ! -f "$HOME/.asdf/plugins/yarn/set-env.zsh" ]] || source "$HOME/.asdf/plugins/yarn/set-env.zsh"
 
-# Azure CLI
-# autoload bashcompinit && bashcompinit
-# source "$(brew --prefix az)/etc/bash_completion.d/az"
+# Mac
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  # Goland
+  # Set path to Goland binary if on Mac
+  export PATH="$PATH:/Applications/GoLand.app/Contents/MacOS"
+fi
 
 # iTerm
 # Use random color for new tabs in iTerm
@@ -167,4 +172,4 @@ fi
 [[ ! -f "$HOME/.p10k.zsh"]] || source "$HOME/.p10k.zsh"
 
 # Fig post block. Keep at the bottom of this file.
-[[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.post.zsh"
+# [[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.post.zsh"

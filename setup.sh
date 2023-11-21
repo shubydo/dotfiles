@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 set -euo pipefail
 
@@ -76,8 +76,7 @@ link() {
           continue
         fi
       fi
-      ln -sf "$SOURCE_FILE" "$DEST_FILE"
-      # ln -sfv "$SOURCE_FILE" "$DEST_FILE"
+      ln -sfv "$SOURCE_FILE" "$DEST_FILE"
     fi
   done
 }
@@ -147,17 +146,25 @@ setup_ohmyzsh() {
     else
       echo -e "${WARNING_YELLOW} script downloaded does not match current version. It is recommended to commit changes before proceeding with install ${ENDCOLOR}"
       echo -e "git add $SCRIPT_PATH && git commit -m 'chore(omz): update install script'"
+      exit 0
     fi
   }
 
   # TODO: handle oh-my-zsh config error from install script: The $ZSH folder already exists (/home/shubydo/.oh-my-zsh).
   # ...$ZSH setting or the $ZSH variable is exported.
-  [[ ! -d "$CUSTOM_OMZ_ZSH_PATH" ]] || echo "No existing oh-my-zsh config found in $CUSTOM_OMZ_ZSH_PATH"
-  if [[ "$DRY_RUN" == true ]]; then
-    echo "Dry run: sh $SCRIPT_PATH"
+  if [[ ! -d "$CUSTOM_OMZ_ZSH_PATH" ]]; then
+    if [[ "$DRY_RUN" == true ]]; then
+      echo "Dry run: 'ZSH=""${CUSTOM_OMZ_ZSH_PATH}"" sh -c ""./${SCRIPT_PATH}"" --unattended'"
+    else
+      download && ZSH=$CUSTOM_OMZ_ZSH_PATH sh -c ./$SCRIPT_PATH --unattended
+    fi
   else
-    download && sh "$SCRIPT_PATH"
-    # sh "$SCRIPT_PATH"
+    echo "oh-my-zsh already installed in $CUSTOM_OMZ_ZSH_PATH"
+    if [[ "$DRY_RUN" == true ]]; then
+      echo "Dry run: omz update"
+    else
+      omz update # update oh-my-zsh
+    fi
   fi
 
   setup_powerlevel10k
@@ -167,6 +174,8 @@ setup_powerlevel10k() {
   echo -e "${CYAN_BOLD}Setting up powerlevel10k${ENDCOLOR}"
 
   # if omz not installed, exit
+  # Failing here because script runs in bash. Maybe change to run in zsh
+  # or refactor
   if [[ ! $(command -v omz) ]]; then
     echo "oh-my-zsh not installed. Run setup_ohmyzsh first"
     exit 1
@@ -259,7 +268,7 @@ while [[ "$#" -gt 0 ]]; do
     exit 0
     ;;
   -z | --zsh)
-    setup_ohmyzsh
+    # setup_ohmyzsh
     setup_powerlevel10k
     exit 0
     ;;
