@@ -3,9 +3,7 @@
 alias reload="source $HOME/.zshrc"
 
 # Editor (set in .zshrc)
-alias v="$EDITOR" # nvim
-alias vi="$EDITOR" # muscle memory
-alias vim="$EDITOR" # muscle memory
+alias v="$EDITOR" # muscle memory
 alias n="$EDITOR"
 alias nv="$EDITOR"
 
