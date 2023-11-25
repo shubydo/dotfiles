@@ -136,18 +136,20 @@ fi
 export PATH="$PATH:$HOME/code/shell_scripts"
 
 # ASDF
-# Go
-# "$HOME/.asdf/plugins/golang/set-env.zsh"  does not add GOBIN to path
-export GOPATH="$(asdf where golang)/packages"
-export GOROOT="$(asdf where golang)/go"
-export PATH="$PATH:$(go env GOPATH)/bin"
+if command -v asdf; then
+  # Go
+  # "$HOME/.asdf/plugins/golang/set-env.zsh"  does not add GOBIN to path
+  export GOPATH="$(asdf where golang)/packages"
+  export GOROOT="$(asdf where golang)/go"
+  export PATH="$PATH:$(go env GOPATH)/bin"
 
-# Use `go.mod` when determining Go version to use
-# export ASDF_GOLANG_MOD_VERSION_ENABLED=true
+  # Use `go.mod` when determining Go version to use
+  # export ASDF_GOLANG_MOD_VERSION_ENABLED=true
 
-# Yarn
-# shellcheck disable=SC1091
-[[ ! -f "$HOME/.asdf/plugins/yarn/set-env.zsh" ]] || source "$HOME/.asdf/plugins/yarn/set-env.zsh"
+  # Yarn
+  # shellcheck disable=SC1091
+  [[ ! -f "$HOME/.asdf/plugins/yarn/set-env.zsh" ]] || source "$HOME/.asdf/plugins/yarn/set-env.zsh"
+fi
 
 # Mac
 if [[ "$OSTYPE" == "darwin"* ]]; then
