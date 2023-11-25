@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 set -euo pipefail
 
@@ -50,7 +50,7 @@ link() {
     "iterm"
   )
 
-  FILES=$(git ls-files | grep -v -e "$(printf "%s\n" "${IGNORE_LIST[@]}")")
+  FILES=($(git ls-files | grep -v -e "$(printf "%s\n" "${IGNORE_LIST[@]}")"))
 
   # Add colors to output
   echo -e "${CYAN_BG_BOLD}Creating symlinks to dotfiles in ${HOME} directory${ENDCOLOR}"
@@ -58,7 +58,8 @@ link() {
   echo "Files to be linked: $FILES"
   echo "----------------------------------"
 
-  for FILE in $FILES; do
+  # 
+  for FILE in "${FILES[@]}"; do
     SOURCE_FILE="$PWD/$FILE"
     DEST_FILE="$HOME/$FILE"
 
@@ -77,6 +78,7 @@ link() {
         fi
       fi
       ln -sfv "$SOURCE_FILE" "$DEST_FILE"
+      echo 
     fi
   done
 }
@@ -119,6 +121,24 @@ setup_nvim() {
 # 	fi
 # }
 
+# setup_zsh_autosuggestions - setup zsh-autosuggestions plugin
+setup_zsh_autosuggestions() {
+  DEST_PATH="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
+  
+  echo -e "${CYAN_BOLD}Setting up zsh-autosuggestions plugin${ENDCOLOR}"
+  if [[ -d "$DEST_PATH" ]]; then
+    echo "Existing zsh-autosuggestions plugin found in $DEST_PATH"
+    return
+  fi
+
+  if [[ "$DRY_RUN" == true ]]; then
+    echo "Dry run: git clone https://github.com/zsh-users/zsh-autosuggestions $DEST_PATH" 
+  else
+    echo "Cloning zsh-autosuggestions plugin"
+    git clone https://github.com/zsh-users/zsh-autosuggestions "$DEST_PATH"
+  fi
+}
+
 setup_ohmyzsh() {
   OMZ_SCRIPT="https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh"
   SCRIPT_PATH="omz_install.sh"
@@ -144,9 +164,9 @@ setup_ohmyzsh() {
     if [[ -z "$IS_LATEST" ]]; then
       echo "Using latest version of script!"
     else
-      echo -e "${WARNING_YELLOW} script downloaded does not match current version. It is recommended to commit changes before proceeding with install ${ENDCOLOR}"
+      echo -e "${WARNING_YELLOW} script downloaded does not match current version. It is recommended to commit changes before proceeding with install ${ENDCOLOR}:\n"
       echo -e "git add $SCRIPT_PATH && git commit -m 'chore(omz): update install script'"
-      exit 0
+      exit 1
     fi
   }
 
@@ -160,32 +180,20 @@ setup_ohmyzsh() {
     fi
   else
     echo "oh-my-zsh already installed in $CUSTOM_OMZ_ZSH_PATH"
-    if [[ "$DRY_RUN" == true ]]; then
-      echo "Dry run: omz update"
-    else
-      omz update # update oh-my-zsh
-    fi
   fi
 
-  setup_powerlevel10k
+  # setup_powerlevel10k 
 }
 
 setup_powerlevel10k() {
   echo -e "${CYAN_BOLD}Setting up powerlevel10k${ENDCOLOR}"
 
-  # if omz not installed, exit
-  # Failing here because script runs in bash. Maybe change to run in zsh
-  # or refactor
-  if [[ ! $(command -v omz) ]]; then
-    echo "oh-my-zsh not installed. Run setup_ohmyzsh first"
-    exit 1
-  fi
-
   DEST_PATH="${ZSH_CUSTOM:-$ZSH/custom}/themes/powerlevel10k"
 
   # Clone powerlevel10k theme
-  if [[ ! -d "$DEST_PATH" ]]; then
-    echo "No existing powerlevel10k theme found in $DEST_PATH"
+  if [[ -d "$DEST_PATH" ]]; then
+    echo "Existing powerlevel10k theme found in $DEST_PATH"
+    return
   fi
 
   if [[ "$DRY_RUN" == true ]]; then
@@ -203,7 +211,6 @@ display_usage() {
   echo "  -d, --dry-run     Print what would be done without actually doing it."
   echo "  -i, --interactive Enable prompts before overwriting symlinks"
   echo "  -y, --yes, --no-prompt   Do not prompt before creating or overwriting symlinks"
-  echo "  -l, --link        Setup (symlink) dotfiles in $HOME directory only"
   echo "  -n, --nvim        Setup nvim config only"
   echo "  -z, --zsh         Setup zsh: oh-my-zsh + theme"
 }
@@ -238,25 +245,19 @@ if [[ "$*" == *--dry-run* ]] || [[ "$*" == *-d* ]]; then
   DRY_RUN_MSG="${WARNING_YELLOW}Dry run: ${ENDCOLOR}"
 fi
 
+# If -y, --yes or any of its other aliases are present, disable prompts
+if [[ "$*" == *-y* || "$*" == *--yes* || "$*" == *--no-prompt* ]]; then
+  PROMPT_BEFORE_OVERWRITE=false
+fi
+
 while [[ "$#" -gt 0 ]]; do
   case $1 in
-  -h | --help)
-    display_usage
-    exit 0
-    ;;
-  -d | --dry-run)
-    DRY_RUN=true
-    DRY_RUN_MSG="${WARNING_YELLOW}Dry run: ${ENDCOLOR}"
-    ;;
-  -l | --link)
-   link
-   exit 0	
-   ;;
   -i | --interactive)
     PROMPT_BEFORE_OVERWRITE=true
     link
     setup_nvim
     setup_ohmyzsh
+    setup_zsh_autosuggestions
     setup_powerlevel10k
     exit 0
     ;;
@@ -265,15 +266,19 @@ while [[ "$#" -gt 0 ]]; do
     link
     setup_nvim
     setup_ohmyzsh
+    setup_zsh_autosuggestions
     setup_powerlevel10k
     exit 0
     ;;
   -n | --nvim)
+    link
     setup_nvim
     exit 0
     ;;
   -z | --zsh)
-    # setup_ohmyzsh
+    link
+    setup_ohmyzsh
+    setup_zsh_autosuggestions
     setup_powerlevel10k
     exit 0
     ;;
@@ -283,5 +288,4 @@ while [[ "$#" -gt 0 ]]; do
     exit 1
     ;;
   esac
-  shift
 done

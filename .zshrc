@@ -13,6 +13,7 @@ fi
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
+# export ZSH="$HOME/dotfiles/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -88,13 +89,12 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
   asdf
-  aws
-  brew
+  aws 
   docker 
-  git
-  gh 
-  fzf 
-  # zsh-autosuggestions
+  git 
+  kubectl 
+  terraform 
+  zsh-autosuggestions
 )
 
 source "$ZSH/oh-my-zsh.sh"
@@ -173,7 +173,7 @@ fi
 
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+[[ ! -f "$HOME/.p10k.zsh" ]] || source "$HOME/.p10k.zsh"
 
 # Fig post block. Keep at the bottom of this file.
 # [[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.post.zsh"
