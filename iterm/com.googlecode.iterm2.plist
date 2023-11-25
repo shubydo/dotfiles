@@ -37,13 +37,13 @@
 	<key>FocusOnRightOrMiddleClick</key>
 	<false/>
 	<key>HTMLTabTitles</key>
-	<false/>
+	<true/>
 	<key>HapticFeedbackForEsc</key>
 	<false/>
 	<key>HideMenuBarInFullscreen</key>
 	<true/>
 	<key>HideTab</key>
-	<true/>
+	<false/>
 	<key>HideTabNumber</key>
 	<false/>
 	<key>Hotkey</key>
