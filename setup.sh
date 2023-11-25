@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 
 set -euo pipefail
 
@@ -203,6 +203,7 @@ display_usage() {
   echo "  -d, --dry-run     Print what would be done without actually doing it."
   echo "  -i, --interactive Enable prompts before overwriting symlinks"
   echo "  -y, --yes, --no-prompt   Do not prompt before creating or overwriting symlinks"
+  echo "  -l, --link        Setup (symlink) dotfiles in $HOME directory only"
   echo "  -n, --nvim        Setup nvim config only"
   echo "  -z, --zsh         Setup zsh: oh-my-zsh + theme"
 }
@@ -243,10 +244,14 @@ while [[ "$#" -gt 0 ]]; do
     display_usage
     exit 0
     ;;
-  # -d | --dry-run)
-  #   DRY_RUN=true
-  #   DRY_RUN_MSG="${WARNING_YELLOW}Dry run: ${ENDCOLOR}"
-  #   ;;
+  -d | --dry-run)
+    DRY_RUN=true
+    DRY_RUN_MSG="${WARNING_YELLOW}Dry run: ${ENDCOLOR}"
+    ;;
+  -l | --link)
+   link
+   exit 0	
+   ;;
   -i | --interactive)
     PROMPT_BEFORE_OVERWRITE=true
     link
