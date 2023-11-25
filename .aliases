@@ -1,6 +1,8 @@
 # General
 
-alias reload="source $HOME/.zshrc"
+alias reload="exec zsh"
+# sourcing does not terminate running processes began
+# alias reload="source $HOME/.zshrc"
 
 # Editor (set in .zshrc)
 alias v="$EDITOR" # muscle memory
