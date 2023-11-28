@@ -20,32 +20,34 @@ asdf_set() {
 	VERSION="$3"
 	# VERSION="${3-:latest}"
 
-
-	if [[ -z "$SCOPE" || "$SCOPE" =~ (global|local) ]]; then
-		# SCOPE is empty or is not global or local
-		echo "SCOPE must be either global or local"
-		exit 1
+	printf "asdf_set: SCOPE=%s, TOOL=%s, VERSION=%s\n" "$SCOPE" "$TOOL" "$VERSION"
+	
+	# Check if SCOPE is "global" or "local"
+	if [[ -z "$SCOPE" || ! "$SCOPE" =~ ^(global|local)$ ]]; then
+		echo -e "[[ -z $SCOPE || ! $SCOPE =~ ^(global|local)$ ]]"
+		echo "Invalid scope: $SCOPE (must be 'global' or 'local')"
+		echo "Usage: $0 <SCOPE> <TOOL> <VERSION>"
+		exit 0 
 	fi
 
 	if [[ -z "$TOOL" ]]; then
 		echo "Invalid tool: $TOOL"
 		echo "Usage: $0 <SCOPE> <TOOL> <VERSION>"
-		exit 1
+		exit 0
 	fi
 
 	if [[ -z "$VERSION" ]]; then
 		echo "Invalid version: $VERSION"
 		echo "Usage: $0 <SCOPE> <TOOL> <VERSION>"
-		exit 1
+		exit 0
 	fi
 
-	echo -e "${CYAN_BG_BOLD}Upgrading $TOOL to $VERSION${ENDCOLOR}"
+	echo -e "${CYAN_BG_BOLD}Upgrading $SCOPE $TOOL to $VERSION${ENDCOLOR}"
 	asdf install "$TOOL" "$VERSION"
 
-	echo -e "\033[4;33mSetting $SCOPE $TOOL to $VERSION\033[0m"
+	echo -e "${MAGENTA_BOLD}Setting $SCOPE $TOOL to $VERSION${ENDCOLOR}"
 	asdf "$SCOPE" "$TOOL" "$VERSION"
 	asdf reshim "$TOOL" "$VERSION"
-
 }
 
 # Upgrade all versions of tools managed via asdf: https://github.com/asdf-vm/asdf

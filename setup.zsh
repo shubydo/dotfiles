@@ -205,7 +205,9 @@ setup_ohmyzsh() {
 setup_powerlevel10k() {
   echo -e "${CYAN_BOLD}Setting up powerlevel10k${ENDCOLOR}"
 
+  THEME_URL="https://github.com/romkatv/powerlevel10k.git"
   DEST_PATH="${ZSH_CUSTOM:-$ZSH/custom}/themes/powerlevel10k"
+  
 
   # Clone powerlevel10k theme
   if [[ -d "$DEST_PATH" ]]; then
@@ -214,9 +216,9 @@ setup_powerlevel10k() {
   fi
 
   if [[ "$DRY_RUN" == true ]]; then
-    echo "Dry run: git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $DEST_PATH"
+    echo "Dry run: git clone --depth=1 $THEME_URL $DEST_PATH"
   else
-    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$DEST_PATH"
+    git clone --depth=1 "$THEME_URL" "$DEST_PATH"
   fi
 }
 
