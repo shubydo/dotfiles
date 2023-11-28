@@ -33,6 +33,20 @@ colors() {
   ENDCOLOR="\033[0m"
 }
 
+color_test() {
+  colors
+   # shellcheck disable=SC2034  # Unused variables left for readability
+  for i in {0..255}; do
+
+    echo "----------------------------------"
+    echo "i: $i"
+    echo "----------------------------------"
+
+    COLOR_BOLD="\033[1;${i}m"
+    echo -e "${COLOR_BOLD}colour${i}${ENDCOLOR}"
+  done
+}
+
 # Create symlinks to dotfiles in home directory
 link() {
   # Create symlinks to dotfiles
@@ -69,8 +83,11 @@ link() {
       echo "Linking $SOURCE_FILE to $DEST_FILE"
       # prompt user if file already exists
       if [[ "$DRY_RUN" == false && "$PROMPT_BEFORE_OVERWRITE" == true && -f "$DEST_FILE" ]]; then
-        read -p "File $DEST_FILE already exists. Overwrite? (y/n) " -n 1 -r
-        echo
+        
+        # read -p "File $DEST_FILE already exists. Overwrite? (y/n) " -n 1 -r
+        echo -e "${WARNING_YELLOW_BOLD}File $DEST_FILE already exists. Overwrite? (y/n) ${ENDCOLOR}"
+        read -r REPLY
+
         # if reply is not y or Y, skip this file
         if [[ ! $REPLY =~ ^[Yy]$ ]]; then
           echo "Skipping $FILE"
@@ -164,7 +181,7 @@ setup_ohmyzsh() {
     if [[ -z "$IS_LATEST" ]]; then
       echo "Using latest version of script!"
     else
-      echo -e "${WARNING_YELLOW} script downloaded does not match current version. It is recommended to commit changes before proceeding with install ${ENDCOLOR}:\n"
+      echo -e "${WARNING_YELLOW_BOLD} script downloaded does not match current version. It is recommended to commit changes before proceeding with install ${ENDCOLOR}:\n"
       echo -e "git add $SCRIPT_PATH && git commit -m 'chore(omz): update install script'"
       exit 1
     fi
@@ -242,7 +259,7 @@ fi
 # If --dry-run flag is present, print what would be done without actually doing it
 if [[ "$*" == *--dry-run* ]] || [[ "$*" == *-d* ]]; then
   DRY_RUN=true
-  DRY_RUN_MSG="${WARNING_YELLOW}Dry run: ${ENDCOLOR}"
+  DRY_RUN_MSG="${WARNING_YELLOW_BOLD}Dry run: ${ENDCOLOR}"
 fi
 
 # If -y, --yes or any of its other aliases are present, disable prompts
