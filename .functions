@@ -13,8 +13,43 @@ myip() {
 	echo "Current IP: $(pbpaste)"
 }
 
+
+asdf_set() {
+	SCOPE="$1"
+	TOOL="$2"
+	VERSION="$3"
+	# VERSION="${3-:latest}"
+
+
+	if [[ -z "$SCOPE" || "$SCOPE" =~ (global|local) ]]; then
+		# SCOPE is empty or is not global or local
+		echo "SCOPE must be either global or local"
+		exit 1
+	fi
+
+	if [[ -z "$TOOL" ]]; then
+		echo "Invalid tool: $TOOL"
+		echo "Usage: $0 <SCOPE> <TOOL> <VERSION>"
+		exit 1
+	fi
+
+	if [[ -z "$VERSION" ]]; then
+		echo "Invalid version: $VERSION"
+		echo "Usage: $0 <SCOPE> <TOOL> <VERSION>"
+		exit 1
+	fi
+
+	echo -e "${CYAN_BG_BOLD}Upgrading $TOOL to $VERSION${ENDCOLOR}"
+	asdf install "$TOOL" "$VERSION"
+
+	echo -e "\033[4;33mSetting $SCOPE $TOOL to $VERSION\033[0m"
+	asdf "$SCOPE" "$TOOL" "$VERSION"
+	asdf reshim "$TOOL" "$VERSION"
+
+}
+
 # Upgrade all versions of tools managed via asdf: https://github.com/asdf-vm/asdf
-asdfupgrade() {
+asdf_upgrade() {
 	TOOLS=($(asdf plugin list))
 	echo -e "\033[4;33mCurrently installed tools: ${TOOLS[*]}\033[0m"
 	for TOOL in "${TOOLS[@]}"; do
@@ -28,7 +63,7 @@ asdfupgrade() {
 }
 
 # Upgrade all brew packages
-brewupgrade() {
+brew_upgrade() {
 	echo -e "\033[4;33mUpgrade all brew packages\033[0m"
 	brew upgrade -v --greedy
 
@@ -59,10 +94,10 @@ upgrade() {
 
 	echo -e "${MAGENTA_BG_BOLD}Upgrade brew packages and languages installed via asdf${ENDCOLOR}"
 	echo -e "${CYAN_BOLD}BREW${ENDCOLOR}"
-	brewupgrade
+	brew_upgrade
 
 	echo -e "${CYAN_BOLD}ASDF${ENDCOLOR}"
-	asdfupgrade
+	asdf_upgrade
 
 	echo -e "${MAGENTA_BG_BOLD}Done!${ENDCOLOR}"
 }
