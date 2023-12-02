@@ -87,6 +87,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
+# shellcheck disable=SC2034
 plugins=(
   asdf
   aws 
@@ -97,7 +98,7 @@ plugins=(
   zsh-autosuggestions
 )
 
-source "$ZSH/oh-my-zsh.sh"
+[[ -f "$ZSH/oh-my-zsh.sh" ]] && source "$ZSH/oh-my-zsh.sh"
 
 # User configuration
 
@@ -136,7 +137,7 @@ fi
 export PATH="$PATH:$HOME/code/shell_scripts"
 
 # ASDF
-if command -v asdf; then
+if command -v asdf > /dev/null 2>&1; then
   # Go
   # "$HOME/.asdf/plugins/golang/set-env.zsh"  does not add GOBIN to path
   export GOPATH="$(asdf where golang)/packages"
