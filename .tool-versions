@@ -1,4 +1,4 @@
-golang 1.21.3
+golang 1.21.4
 golangci-lint 1.54.2
 nodejs 20.8.0
 python 3.11.6
@@ -6,4 +6,3 @@ terraform-docs 0.16.0
 terraform 1.6.1
 terragrunt 0.52.1
 tflint 0.48.0
-neovim 0.9.4

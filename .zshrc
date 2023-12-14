@@ -1,6 +1,3 @@
-# Fig pre block. Keep at the top of this file.
-[[ -f "$HOME/.fig/shell/zshrc.pre.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.pre.zsh"
-
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -18,11 +15,7 @@ export ZSH="$HOME/.oh-my-zsh"
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-# https://spaceship-prompt.sh/getting-started/#Installing
-# ZSH_THEME="spaceship"
-# [[ ! -f "$HOME/.spaceship.zsh" ]] || source "$HOME/.spaceship.zsh"
 ZSH_THEME="powerlevel10k/powerlevel10k"
-[[ ! -f "$HOME/.p10k.zsh" ]] || source "$HOME/.p10k.zsh"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -82,13 +75,11 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Which plugins would you like to load?
 # Standard plugins can be found in $ZSH/plugins/
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
-# zsh-autosuggestions: git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(asdf aws brew docker gcloud git gh kubectl fzf terraform zsh-autosuggestions)
+plugins=(git)
 
-source "$ZSH/oh-my-zsh.sh"
+source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
@@ -98,11 +89,11 @@ source "$ZSH/oh-my-zsh.sh"
 # export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
-if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='vim'
-else
-  export EDITOR='nvim'
-fi
+# if [[ -n $SSH_CONNECTION ]]; then
+#   export EDITOR='vim'
+# else
+#   export EDITOR='mvim'
+# fi
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
@@ -113,44 +104,8 @@ fi
 # For a full list of active aliases, run `alias`.
 #
 # Example aliases
-# alias zshconfig="mate $HOME.zshrc"
-# alias ohmyzsh="mate $HOME.oh-my-zsh"
-
-# Functions
-[[ ! -f "$HOME/.functions" ]] || source "$HOME/.functions"
-[[ ! -f "$HOME/.functions_work" ]] || source "$HOME/.functions_work"
-
-# Aliases
-[[ ! -f "$HOME/.aliases" ]] || source "$HOME/.aliases"
-
-# Shell Scripts
-export PATH="$PATH:$HOME/code/shell_scripts"
-
-# Go (asdf)
-export GOPATH="$(asdf where golang)/packages"
-export GOROOT="$(asdf where golang)/go"
-export PATH="$PATH:$(go env GOPATH)/bin"
-
-# shellcheck disable=SC1091
-# [[ ! -f "$HOME/.asdf/plugins/golang/set-env.zsh" ]] || source "$HOME/.asdf/plugins/golang/set-env.zsh" 
-
-# Use `go.mod` when determining Go version to use
-# export ASDF_GOLANG_MOD_VERSION_ENABLED=true
-
-# Goland
-export PATH="$PATH:/Applications/GoLand.app/Contents/MacOS"
-
-
-# Yarn (asdf)
-# shellcheck disable=SC1091
-[[ ! -f "$HOME/.asdf/plugins/yarn/set-env.zsh" ]] || source "$HOME/.asdf/plugins/yarn/set-env.zsh"
-
-# Azure CLI
-# autoload bashcompinit && bashcompinit
-# source "$(brew --prefix az)/etc/bash_completion.d/az"
+# alias zshconfig="mate ~/.zshrc"
+# alias ohmyzsh="mate ~/.oh-my-zsh"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-
-# Fig post block. Keep at the bottom of this file.
-[[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.post.zsh"
