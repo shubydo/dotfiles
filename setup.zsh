@@ -138,65 +138,49 @@ setup_nvim() {
 # 	fi
 # }
 
-# setup_zsh_autosuggestions - setup zsh-autosuggestions plugin
-setup_zsh_autosuggestions() {
-  DEST_PATH="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
-  
-  echo -e "${CYAN_BOLD}Setting up zsh-autosuggestions plugin${ENDCOLOR}"
+# setup_zsh_plugin - setup zsh plugin
+setup_ohmyzsh_plugin() {
+  local PLUGIN_NAME="$1"
+  local PLUGIN_URL="$2"
+  local DEST_PATH="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/$PLUGIN_NAME"
+
+  if [[ -z "$PLUGIN_NAME" ]]; then
+    echo "No plugin name provided"
+    exit 1
+  fi
+
+  if [[ -z "$PLUGIN_URL" ]]; then
+    echo "No plugin URL provided"
+    exit 1
+  fi
+
+
+  echo -e "${CYAN_BOLD}Setting up $PLUGIN_NAME plugin${ENDCOLOR}"
+
+  DEST_PATH="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins"
   if [[ -d "$DEST_PATH" ]]; then
-    echo "Existing zsh-autosuggestions plugin found in $DEST_PATH"
+    echo "Existing $PLUGIN_NAME plugin found in $DEST_PATH"
     return
   fi
 
   if [[ "$DRY_RUN" == true ]]; then
-    echo "Dry run: git clone https://github.com/zsh-users/zsh-autosuggestions $DEST_PATH" 
+    echo "Dry run: git clone $PLUGIN_URL $DEST_PATH"
   else
-    echo "Cloning zsh-autosuggestions plugin"
-    git clone https://github.com/zsh-users/zsh-autosuggestions "$DEST_PATH"
+    echo "Cloning $PLUGIN_NAME plugin"
+    git clone "$PLUGIN_URL" "$DEST_PATH"
   fi
 }
 
-# setup additional oh-my-zsh custom plugin  
-setup_zsh_custom_plugin() {
-
-  PLUGIN="$1"
-  REPO="$2"
-
-  if 
-:q!
-  DEST_PATH="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
+setup_ohmyzsh_plugins() {
+  echo -e "${CYAN_BOLD}Setting up oh-my-zsh plugins${ENDCOLOR}"
   
-  echo -e "${CYAN_BOLD}Setting up zsh-autosuggestions plugin${ENDCOLOR}"
-  if [[ -d "$DEST_PATH" ]]; then
-    echo "Existing zsh-autosuggestions plugin found in $DEST_PATH"
-    return
-  fi
-
-  if [[ "$DRY_RUN" == true ]]; then
-    echo "Dry run: git clone https://github.com/zsh-users/zsh-autosuggestions $DEST_PATH" 
-  else
-    echo "Cloning zsh-autosuggestions plugin"
-    git clone https://github.com/zsh-users/zsh-autosuggestions "$DEST_PATH"
-  fi
+  setup_ohmyzsh_plugin "zsh-autosuggestions" "https://github.com/zsh-users/zsh-autosuggestions" \
+  && setup_ohmyzsh_plugin "zsh-syntax-highlighting" "https://github.com/zsh-users/zsh-syntax-highlighting.git"
 }
 
-# setup_zsh_autosuggestions - setup zsh-autosuggestions plugin
-setup_zsh_autosuggestions() {
-  DEST_PATH="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
-  
-  echo -e "${CYAN_BOLD}Setting up zsh-autosuggestions plugin${ENDCOLOR}"
-  if [[ -d "$DEST_PATH" ]]; then
-    echo "Existing zsh-autosuggestions plugin found in $DEST_PATH"
-    return
-  fi
-
-  if [[ "$DRY_RUN" == true ]]; then
-    echo "Dry run: git clone https://github.com/zsh-users/zsh-autosuggestions $DEST_PATH" 
-  else
-    echo "Cloning zsh-autosuggestions plugin"
-    git clone https://github.com/zsh-users/zsh-autosuggestions "$DEST_PATH"
-  fi
-}
+#   setup_zsh_plugin "zsh-autosuggestions" "https://github.com/zsh-users/zsh-autosuggestions" \
+#   && setup_zsh_plugin "zsh-syntax-highlighting" "https://github.com/zsh-users/zsh-syntax-highlighting.git"
+# }
 
 setup_ohmyzsh() {
   OMZ_SCRIPT="https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh"
@@ -273,7 +257,7 @@ display_usage() {
   echo "  -i, --interactive Enable prompts before overwriting symlinks"
   echo "  -y, --yes, --no-prompt   Do not prompt before creating or overwriting symlinks"
   echo "  -n, --nvim        Setup nvim config only"
-  echo "  -z, --zsh         Setup zsh: oh-my-zsh + theme"
+  echo "  -z, --zsh         Setup zsh: oh-my-zsh + theme + plugins"
 }
 
 # Set default values for flags
@@ -318,7 +302,7 @@ while [[ "$#" -gt 0 ]]; do
     link
     setup_nvim
     setup_ohmyzsh
-    setup_zsh_autosuggestions
+    setup_ohmyzsh_plugins
     setup_powerlevel10k
     exit 0
     ;;
@@ -327,7 +311,7 @@ while [[ "$#" -gt 0 ]]; do
     link
     setup_nvim
     setup_ohmyzsh
-    setup_zsh_autosuggestions
+    setup_ohmyzsh_plugins
     setup_powerlevel10k
     exit 0
     ;;
@@ -339,7 +323,7 @@ while [[ "$#" -gt 0 ]]; do
   -z | --zsh)
     link
     setup_ohmyzsh
-    setup_zsh_autosuggestions
+    setup_ohmyzsh_plugins
     setup_powerlevel10k
     exit 0
     ;;
