@@ -156,8 +156,7 @@ setup_ohmyzsh_plugin() {
 
 
   echo -e "${CYAN_BOLD}Setting up $PLUGIN_NAME plugin${ENDCOLOR}"
-
-  DEST_PATH="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins"
+  
   if [[ -d "$DEST_PATH" ]]; then
     echo "Existing $PLUGIN_NAME plugin found in $DEST_PATH"
     return
@@ -174,13 +173,10 @@ setup_ohmyzsh_plugin() {
 setup_ohmyzsh_plugins() {
   echo -e "${CYAN_BOLD}Setting up oh-my-zsh plugins${ENDCOLOR}"
   
-  setup_ohmyzsh_plugin "zsh-autosuggestions" "https://github.com/zsh-users/zsh-autosuggestions" \
-  && setup_ohmyzsh_plugin "zsh-syntax-highlighting" "https://github.com/zsh-users/zsh-syntax-highlighting.git"
-}
+  setup_ohmyzsh_plugin "zsh-autosuggestions" "https://github.com/zsh-users/zsh-autosuggestions"
 
-#   setup_zsh_plugin "zsh-autosuggestions" "https://github.com/zsh-users/zsh-autosuggestions" \
-#   && setup_zsh_plugin "zsh-syntax-highlighting" "https://github.com/zsh-users/zsh-syntax-highlighting.git"
-# }
+  setup_ohmyzsh_plugin "zsh-syntax-highlighting" "https://github.com/zsh-users/zsh-syntax-highlighting.git"
+}
 
 setup_ohmyzsh() {
   OMZ_SCRIPT="https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh"
