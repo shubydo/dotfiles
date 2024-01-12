@@ -138,22 +138,44 @@ setup_nvim() {
 # 	fi
 # }
 
-# setup_zsh_autosuggestions - setup zsh-autosuggestions plugin
-setup_zsh_autosuggestions() {
-  DEST_PATH="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
+# setup_zsh_plugin - setup zsh plugin
+setup_ohmyzsh_plugin() {
+  local PLUGIN_NAME="$1"
+  local PLUGIN_URL="$2"
+  local DEST_PATH="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/$PLUGIN_NAME"
+
+  if [[ -z "$PLUGIN_NAME" ]]; then
+    echo "No plugin name provided"
+    exit 1
+  fi
+
+  if [[ -z "$PLUGIN_URL" ]]; then
+    echo "No plugin URL provided"
+    exit 1
+  fi
+
+
+  echo -e "${CYAN_BOLD}Setting up $PLUGIN_NAME plugin${ENDCOLOR}"
   
-  echo -e "${CYAN_BOLD}Setting up zsh-autosuggestions plugin${ENDCOLOR}"
   if [[ -d "$DEST_PATH" ]]; then
-    echo "Existing zsh-autosuggestions plugin found in $DEST_PATH"
+    echo "Existing $PLUGIN_NAME plugin found in $DEST_PATH"
     return
   fi
 
   if [[ "$DRY_RUN" == true ]]; then
-    echo "Dry run: git clone https://github.com/zsh-users/zsh-autosuggestions $DEST_PATH" 
+    echo "Dry run: git clone $PLUGIN_URL $DEST_PATH"
   else
-    echo "Cloning zsh-autosuggestions plugin"
-    git clone https://github.com/zsh-users/zsh-autosuggestions "$DEST_PATH"
+    echo "Cloning $PLUGIN_NAME plugin"
+    git clone "$PLUGIN_URL" "$DEST_PATH"
   fi
+}
+
+setup_ohmyzsh_plugins() {
+  echo -e "${CYAN_BOLD}Setting up oh-my-zsh plugins${ENDCOLOR}"
+  
+  setup_ohmyzsh_plugin "zsh-autosuggestions" "https://github.com/zsh-users/zsh-autosuggestions"
+
+  setup_ohmyzsh_plugin "zsh-syntax-highlighting" "https://github.com/zsh-users/zsh-syntax-highlighting.git"
 }
 
 setup_ohmyzsh() {
@@ -167,7 +189,7 @@ setup_ohmyzsh() {
   # Don't let install run if ZSH env var is already set and has value that does not match custom location
   # (ex: .zshrc, or program set externally)
   if [[ "$ZSH" != "$CUSTOM_OMZ_ZSH_PATH" ]]; then
-    echo "ZSH already set!: $ZSH"
+    echo "ZSH not configured as expected!: $ZSH"
     echo "Must be set to $CUSTOM_OMZ_ZSH_PATH"
     exit 1
   fi
@@ -231,7 +253,7 @@ display_usage() {
   echo "  -i, --interactive Enable prompts before overwriting symlinks"
   echo "  -y, --yes, --no-prompt   Do not prompt before creating or overwriting symlinks"
   echo "  -n, --nvim        Setup nvim config only"
-  echo "  -z, --zsh         Setup zsh: oh-my-zsh + theme"
+  echo "  -z, --zsh         Setup zsh: oh-my-zsh + theme + plugins"
 }
 
 # Set default values for flags
@@ -258,25 +280,25 @@ if [[ "$*" == *--help* ]] || [[ "$*" == *-h* ]]; then
   exit 0
 fi
 
+# If -y, --yes or any of its other aliases are present, disable prompts
+if [[ "$*" == *-y* || "$*" == *--yes* || "$*" == *--no-prompt* ]]; then
+  PROMPT_BEFORE_OVERWRITE=false
+fi
+
 # If --dry-run flag is present, print what would be done without actually doing it
 if [[ "$*" == *--dry-run* ]] || [[ "$*" == *-d* ]]; then
   DRY_RUN=true
   DRY_RUN_MSG="${WARNING_YELLOW_BOLD}Dry run: ${ENDCOLOR}"
 fi
 
-# If -y, --yes or any of its other aliases are present, disable prompts
-if [[ "$*" == *-y* || "$*" == *--yes* || "$*" == *--no-prompt* ]]; then
-  PROMPT_BEFORE_OVERWRITE=false
-fi
-
 while [[ "$#" -gt 0 ]]; do
-  case $1 in
+  case "$1" in
   -i | --interactive)
     PROMPT_BEFORE_OVERWRITE=true
     link
     setup_nvim
     setup_ohmyzsh
-    setup_zsh_autosuggestions
+    setup_ohmyzsh_plugins
     setup_powerlevel10k
     exit 0
     ;;
@@ -285,7 +307,7 @@ while [[ "$#" -gt 0 ]]; do
     link
     setup_nvim
     setup_ohmyzsh
-    setup_zsh_autosuggestions
+    setup_ohmyzsh_plugins
     setup_powerlevel10k
     exit 0
     ;;
@@ -297,7 +319,7 @@ while [[ "$#" -gt 0 ]]; do
   -z | --zsh)
     link
     setup_ohmyzsh
-    setup_zsh_autosuggestions
+    setup_ohmyzsh_plugins
     setup_powerlevel10k
     exit 0
     ;;
