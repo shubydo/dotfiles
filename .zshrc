@@ -82,6 +82,7 @@ plugins=(
   git
   gh
   kubectl 
+  terraform
   zsh-autosuggestions 
   zsh-syntax-highlighting
 )
