@@ -163,3 +163,20 @@ function togglefn() {
 
 	echo "Function key setting toggled from $CURRENT_STATE to $AFTER_STATE"
 }
+
+# iTerm2 tab color changing
+function set_random_tab_color() {
+  if ! [[ $TERM_PROGRAM == "iTerm.app" ]] ; then
+    return
+  fi
+
+  # Generate random RGB values
+  local R=$(jot -r 1 0 255)
+  local G=$(jot -r 1 0 255)
+  local B=$(jot -r 1 0 255)
+
+  # Set tab color to randomly generated RGB value
+  printf "\033]6;1;bg;red;brightness;%s\a" "$R"
+  printf "\033]6;1;bg;green;brightness;%s\a" "$G"
+  printf "\033]6;1;bg;blue;brightness;%s\a" "$B"
+}
