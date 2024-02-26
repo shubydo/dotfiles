@@ -104,7 +104,8 @@ link() {
 setup_nvim() {
   REPO_NAME="shubydo/kickstart.nvim"
   REPO_URL="https://github.com/$REPO_NAME.git"
-  DEST_PATH="$HOME/.config/nvim"
+  # clone to custom path to use as separate configuration
+  DEST_PATH="$HOME/.config/nvim-kickstart"
 
   echo -e "${MAGENTA_BOLD}Setting up nvim config\n${REPO_URL}${ENDCOLOR}"
   if [[ ! -d "$DEST_PATH" ]]; then

@@ -16,7 +16,7 @@ alias aliases="$EDITOR $HOME/.aliases"
 alias omzconfig="$EDITOR $HOME/.oh-my-zsh"
 
 # github.com/shubydo/kickstart.nvim
-alias nvimconfig="$EDITOR $HOME/.config/nvim/init.lua"
+alias nvim-kickstart='NVIM_APPNAME="nvim-kickstart" nvim'
 
 # Mac specific
 
