@@ -106,8 +106,7 @@ setup_nvim() {
   REPO_URL="https://github.com/$REPO_NAME.git"
   DEST_PATH="$HOME/.config/nvim"
 
-  echo -e "${MAGENTA_BOLD}Setting up nvim config${ENDCOLOR}"
-
+  echo -e "${MAGENTA_BOLD}Setting up nvim config\n${REPO_URL}${ENDCOLOR}"
   if [[ ! -d "$DEST_PATH" ]]; then
     echo "No existing nvim config found in $DEST_PATH"
     if [[ "$DRY_RUN" == true ]]; then
