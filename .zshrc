@@ -118,15 +118,14 @@ fi
 [[ ! -f "$HOME/.aliases" ]] || source "$HOME/.aliases"
 [[ ! -f "$HOME/.functions" ]] || source "$HOME/.functions"
 
-# iTerm
-if [[ $TERM_PROGRAM == "iTerm.app" ]]; then 
-  set_random_tab_color
-fi
-
-
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 # everything else
 # DOTFILES="$HOME/dotfiles"
 #PATH="$PATH:$DOTFILES"
+
+# iTerm
+if [[ $TERM_PROGRAM == "iTerm.app" ]]; then 
+  set_random_tab_color
+fi
