@@ -66,10 +66,13 @@ asdf_upgrade() {
 
 # Upgrade all brew packages
 brew_upgrade() {
+	echo -e "\033[4;33mOutdated brew packages\033[0m"
+	brew upgrade -v --greedy --dry-run
+	
 	echo -e "\033[4;33mUpgrade all brew packages\033[0m"
 	brew upgrade -v --greedy
 
-	echo -e "\033[4;33mUinstall unused brew dependencies\033[0m"
+	echo -e "\033[4;33mRemove unused brew dependencies\033[0m"
 	brew autoremove -v
 
 	echo -e "\033[4;33mRemove outdated downloads and old versions of packages\033[0m"
