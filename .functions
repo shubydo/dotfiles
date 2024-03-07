@@ -1,3 +1,8 @@
+# Pretty Print path
+ppath() {
+	echo "$PATH" | tr ":" "\n"
+}
+
 # Decode JWT and print in readable format to console.
 # Usage: jwtd <MY_JWT>
 jwtd() {
