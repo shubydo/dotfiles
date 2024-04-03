@@ -80,10 +80,12 @@ plugins=(
   aws
   asdf
   brew
+  docker
   git
   gh
   kubectl 
   terraform
+  z
   zsh-autosuggestions 
   zsh-syntax-highlighting
 )
@@ -124,6 +126,11 @@ fi
 # everything else
 # DOTFILES="$HOME/dotfiles"
 #PATH="$PATH:$DOTFILES"
+export GOBIN="$HOME/go/bin"
+export PATH="$PATH:$GOBIN"
+
+# krew 
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 
 # iTerm
 if [[ $TERM_PROGRAM == "iTerm.app" ]]; then 
