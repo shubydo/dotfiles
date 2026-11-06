@@ -6,63 +6,93 @@ ppath() {
 # Decode JWT and print in readable format to console.
 # Usage: jwtd <MY_JWT>
 jwtd() {
-	if [[ -x $(command -v jq) ]]; then
-		jq -R 'split(".") | .[0],.[1] | @base64d | fromjson' <<<"${1}"
-		echo "Signature: $(echo "${1}" | awk -F'.' '{print $3}')"
+	if ! command -v jq >/dev/null; then
+		echo "jwtd: jq is required" >&2
+		return 1
 	fi
+	if [[ -z "$1" ]]; then
+		echo "Usage: jwtd <jwt>" >&2
+		return 1
+	fi
+	# JWT segments are base64url-encoded (- and _ instead of + and /) without padding
+	jq -R 'split(".") | .[0],.[1]
+		| gsub("-"; "+") | gsub("_"; "/")
+		| . + ("=" * ((4 - (length % 4)) % 4))
+		| @base64d | fromjson' <<<"${1}"
+	echo "Signature: $(echo "${1}" | awk -F'.' '{print $3}')"
 }
 
 # Get current IP and copy to clipboard (Mac specific)
 myip() {
-	curl -fSsL ifconfig.me | pbcopy
-	echo "Current IP: $(pbpaste)"
+	local IP
+	IP=$(curl -fSsL ifconfig.me) || return 1
+	if command -v pbcopy >/dev/null; then
+		printf "%s" "$IP" | pbcopy
+	elif command -v wl-copy >/dev/null; then
+		printf "%s" "$IP" | wl-copy
+	elif command -v xclip >/dev/null; then
+		printf "%s" "$IP" | xclip -selection clipboard
+	fi
+	echo "Current IP: $IP"
 }
 
 
 asdf_set() {
-	SCOPE="$1"
-	TOOL="$2"
-	VERSION="$3"
+	local SCOPE="$1" TOOL="$2" VERSION="$3"
 	# VERSION="${3-:latest}"
 
 	printf "asdf_set: SCOPE=%s, TOOL=%s, VERSION=%s\n" "$SCOPE" "$TOOL" "$VERSION"
 	
 	# Check if SCOPE is "global" or "local"
 	if [[ -z "$SCOPE" || ! "$SCOPE" =~ ^(global|local)$ ]]; then
-		echo -e "[[ -z $SCOPE || ! $SCOPE =~ ^(global|local)$ ]]"
 		echo "Invalid scope: $SCOPE (must be 'global' or 'local')"
 		echo "Usage: $0 <SCOPE> <TOOL> <VERSION>"
-		exit 0 
+		return 1
 	fi
 
 	if [[ -z "$TOOL" ]]; then
 		echo "Invalid tool: $TOOL"
 		echo "Usage: $0 <SCOPE> <TOOL> <VERSION>"
-		exit 0
+		return 1
 	fi
 
 	if [[ -z "$VERSION" ]]; then
 		echo "Invalid version: $VERSION"
 		echo "Usage: $0 <SCOPE> <TOOL> <VERSION>"
-		exit 0
+		return 1
 	fi
 
 	echo -e "${CYAN_BG_BOLD}Upgrading $SCOPE $TOOL to $VERSION${ENDCOLOR}"
 	asdf install "$TOOL" "$VERSION"
 
 	echo -e "${MAGENTA_BOLD}Setting $SCOPE $TOOL to $VERSION${ENDCOLOR}"
-	asdf "$SCOPE" "$TOOL" "$VERSION"
+	_asdf_pin "$SCOPE" "$TOOL" "$VERSION"
 	asdf reshim "$TOOL" "$VERSION"
+}
+
+# Pin a tool version. asdf >= 0.16 removed `asdf global/local` in favour of `asdf set`.
+# Usage: _asdf_pin <global|local> <tool> <version>
+_asdf_pin() {
+	if asdf help 2>/dev/null | grep -q 'asdf set'; then
+		if [[ "$1" == "global" ]]; then
+			asdf set -u "$2" "$3"
+		else
+			asdf set "$2" "$3"
+		fi
+	else
+		asdf "$1" "$2" "$3"
+	fi
 }
 
 # Upgrade all versions of tools managed via asdf: https://github.com/asdf-vm/asdf
 asdf_upgrade() {
-	TOOLS=($(asdf plugin list))
+	local -a TOOLS=($(asdf plugin list))
+	local TOOL
 	echo -e "\033[4;33mCurrently installed tools: ${TOOLS[*]}\033[0m"
 	for TOOL in "${TOOLS[@]}"; do
 		echo -e "\033[4;33mUpgrading $TOOL\033[0m"
 		asdf install "$TOOL" latest
-		asdf global "$TOOL" latest
+		_asdf_pin global "$TOOL" latest
 		asdf reshim "$TOOL" latest
 	done
 
@@ -115,17 +145,17 @@ upgrade() {
 # KUBECONFIG
 kfile() {
 	echo Available kubeconfigs:
-	files=($(find ~/.kube -type f -depth 1 | sort))
+	# -mindepth/-maxdepth work with both BSD (macOS) and GNU find; `-depth 1` is BSD-only
+	local -a files=($(find ~/.kube -mindepth 1 -maxdepth 1 -type f | sort))
+	local count=0 file choice
 
-	count=0
-	for file in ${files[@]}; do
-		filename=${file##*/}
-		echo "[${count}]: ${filename}"
+	for file in "${files[@]}"; do
+		echo "[${count}]: ${file##*/}"
 		count=$((count + 1))
 	done
 
-	read choice
-	if [[ $choice -le $(($count - 1)) ]] && [[ $choice -ge 0 ]]; then
+	read -r choice
+	if [[ "$choice" =~ ^[0-9]+$ ]] && (( choice < count )); then
 		export KUBECONFIG=${files[@]:$choice:1}
 		echo "KUBECONFIG set to ${KUBECONFIG}"
 	else
@@ -179,9 +209,9 @@ function set_random_tab_color() {
   fi
 
   # Generate random RGB values
-  local R=$(jot -r 1 0 255)
-  local G=$(jot -r 1 0 255)
-  local B=$(jot -r 1 0 255)
+  local R=$((RANDOM % 256))
+  local G=$((RANDOM % 256))
+  local B=$((RANDOM % 256))
 
   # Set tab color to randomly generated RGB value
   printf "\033]6;1;bg;red;brightness;%s\a" "$R"

@@ -17,7 +17,10 @@ alias nvim-kickstart='NVIM_APPNAME="nvim-kickstart" nvim'
 
 # Mac specific
 
-alias sed="gsed"
+# Only alias when GNU sed is installed (brew install gnu-sed); otherwise `sed` breaks entirely
+if command -v gsed >/dev/null; then
+  alias sed="gsed"
+fi
 
 # git
 
