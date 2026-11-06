@@ -137,7 +137,7 @@ test_link_backs_up_existing_files() {
 test_link_interactive_decline_keeps_file() {
   echo "keep me" >"$TEST_HOME/.vimrc"
   # Answer "n" to every overwrite prompt
-  yes n | run_setup -l -i >/dev/null
+  printf 'n\n%.0s' {1..50} | run_setup -l -i >/dev/null
   [[ ! -L "$TEST_HOME/.vimrc" ]] || fail ".vimrc should not have been replaced"
   assert_eq "$(cat "$TEST_HOME/.vimrc")" "keep me"
   # Files that did not exist are still linked without prompting
@@ -168,11 +168,11 @@ test_jwtd_decodes_base64url_without_padding() {
   # Payload chosen so its base64 contains '+' / '/' and needs padding
   local header payload out
   header=$(printf '{"alg":"HS256"}' | base64 | tr '+/' '-_' | tr -d '=\n')
-  payload=$(printf '{"sub":"a?>b~~"}' | base64 | tr '+/' '-_' | tr -d '=\n')
+  payload=$(printf '{"n":"??>>~~"}' | base64 | tr '+/' '-_' | tr -d '=\n')
   [[ "$payload" == *[-_]* ]] || fail "test payload should contain base64url chars"
   out=$(fn "jwtd '$header.$payload.sig'")
   assert_contains "$out" '"alg": "HS256"'
-  assert_contains "$out" '"sub": "a?>b~~"'
+  assert_contains "$out" '"n": "??>>~~"'
   assert_contains "$out" "Signature: sig"
 }
 
