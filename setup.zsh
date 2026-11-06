@@ -49,54 +49,75 @@ color_test() {
 
 # Create symlinks to dotfiles in home directory
 link() {
-  # Create symlinks to dotfiles
-  # Grab all git tracked files in the current directory that are not on the IGNORE_LIST
-  # and create symlinks to them in the home directory
-  IGNORE_LIST=(
-    ".git"
+  # Grab all git tracked files that are not on the IGNORE_LIST and create symlinks
+  # to them in the home directory. Entries are matched exactly (a file name, or a
+  # directory prefix for entries ending in "/").
+  local -a IGNORE_LIST=(
     ".gitignore"
     ".gitmodules"
     ".DS_Store"
-    "setup.sh"
+    ".github/"
+    "setup.zsh"
     "README.md"
     "LICENSE"
     "omz_install.sh"
-    "iterm"
+    "iterm/"
+    "tests/"
   )
 
-  FILES=($(git ls-files | grep -v -e "$(printf "%s\n" "${IGNORE_LIST[@]}")"))
+  local -a FILES=()
+  local FILE ENTRY SKIP
+  for FILE in ${(f)"$(git ls-files)"}; do
+    SKIP=false
+    for ENTRY in "${IGNORE_LIST[@]}"; do
+      if [[ "$FILE" == "$ENTRY" || ( "$ENTRY" == */ && "$FILE" == "$ENTRY"* ) ]]; then
+        SKIP=true
+        break
+      fi
+    done
+    [[ "$SKIP" == true ]] || FILES+=("$FILE")
+  done
 
-  # Add colors to output
   echo -e "${CYAN_BG_BOLD}Creating symlinks to dotfiles in ${HOME} directory${ENDCOLOR}"
   echo "----------------------------------"
-  echo "Files to be linked: $FILES"
+  echo "Files to be linked: ${FILES[*]}"
   echo "----------------------------------"
 
-  # 
+  local SOURCE_FILE DEST_FILE BACKUP_FILE REPLY
   for FILE in "${FILES[@]}"; do
-    SOURCE_FILE="$PWD/$FILE"
+    SOURCE_FILE="$DOTFILES_DIR/$FILE"
     DEST_FILE="$HOME/$FILE"
 
-    if [[ "$DRY_RUN" = true ]]; then
-      echo "Dry run: Linking $SOURCE_FILE to $DEST_FILE"
-    else
-      echo "Linking $SOURCE_FILE to $DEST_FILE"
-      # prompt user if file already exists
-      if [[ "$DRY_RUN" == false && "$PROMPT_BEFORE_OVERWRITE" == true && -f "$DEST_FILE" ]]; then
-        
-        # read -p "File $DEST_FILE already exists. Overwrite? (y/n) " -n 1 -r
-        echo -e "${WARNING_YELLOW_BOLD}File $DEST_FILE already exists. Overwrite? (y/n) ${ENDCOLOR}"
-        read -r REPLY
-
-        # if reply is not y or Y, skip this file
-        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-          echo "Skipping $FILE"
-          continue
-        fi
-      fi
-      ln -sfv "$SOURCE_FILE" "$DEST_FILE"
-      echo 
+    # Already linked to this repo: nothing to do (makes re-runs idempotent)
+    if [[ -L "$DEST_FILE" && "$(readlink "$DEST_FILE")" == "$SOURCE_FILE" ]]; then
+      echo "Already linked: $DEST_FILE"
+      continue
     fi
+
+    if [[ "$DRY_RUN" == true ]]; then
+      echo "Dry run: Linking $SOURCE_FILE to $DEST_FILE"
+      continue
+    fi
+
+    # Prompt user if something already exists at the destination
+    if [[ "$PROMPT_BEFORE_OVERWRITE" == true && ( -e "$DEST_FILE" || -L "$DEST_FILE" ) ]]; then
+      echo -e "${WARNING_YELLOW_BOLD}File $DEST_FILE already exists. Overwrite? (y/n) ${ENDCOLOR}"
+      read -r REPLY
+      if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        echo "Skipping $FILE"
+        continue
+      fi
+    fi
+
+    # Never silently destroy a real (non-symlink) file: back it up first
+    if [[ -e "$DEST_FILE" && ! -L "$DEST_FILE" ]]; then
+      BACKUP_FILE="$DEST_FILE.bak.$(date +%Y%m%d%H%M%S)"
+      echo -e "${WARNING_YELLOW_BOLD}Backing up $DEST_FILE to $BACKUP_FILE${ENDCOLOR}"
+      mv "$DEST_FILE" "$BACKUP_FILE"
+    fi
+
+    mkdir -p "${DEST_FILE:h}"
+    ln -sfv "$SOURCE_FILE" "$DEST_FILE"
   done
 }
 
@@ -188,8 +209,8 @@ setup_ohmyzsh() {
 
   # Don't let install run if ZSH env var is already set and has value that does not match custom location
   # (ex: .zshrc, or program set externally)
-  if [[ "$ZSH" != "$CUSTOM_OMZ_ZSH_PATH" ]]; then
-    echo "ZSH not configured as expected!: $ZSH"
+  if [[ "${ZSH:-$CUSTOM_OMZ_ZSH_PATH}" != "$CUSTOM_OMZ_ZSH_PATH" ]]; then
+    echo "ZSH not configured as expected!: ${ZSH:-}"
     echo "Must be set to $CUSTOM_OMZ_ZSH_PATH"
     exit 1
   fi
@@ -199,7 +220,7 @@ setup_ohmyzsh() {
     echo -e "Checking if using latest install script: $OMZ_SCRIPT"
     curl -fSsL "$OMZ_SCRIPT" -o "$SCRIPT_PATH" && chmod +x "$SCRIPT_PATH"
 
-    IS_LATEST=$(git diff $SCRIPT_PATH)
+    IS_LATEST=$(git diff "$SCRIPT_PATH")
     if [[ -z "$IS_LATEST" ]]; then
       echo "Using latest version of script!"
     else
@@ -209,13 +230,13 @@ setup_ohmyzsh() {
     fi
   }
 
-  # TODO: handle oh-my-zsh config error from install script: The $ZSH folder already exists (/home/shubydo/.oh-my-zsh).
-  # ...$ZSH setting or the $ZSH variable is exported.
   if [[ ! -d "$CUSTOM_OMZ_ZSH_PATH" ]]; then
     if [[ "$DRY_RUN" == true ]]; then
-      echo "Dry run: 'ZSH=""${CUSTOM_OMZ_ZSH_PATH}"" sh -c ""./${SCRIPT_PATH}"" --unattended'"
+      echo "Dry run: ZSH=${CUSTOM_OMZ_ZSH_PATH} sh ./${SCRIPT_PATH} --unattended --keep-zshrc"
     else
-      download && ZSH=$CUSTOM_OMZ_ZSH_PATH sh -c ./$SCRIPT_PATH --unattended
+      # --keep-zshrc: the installer would otherwise move our symlinked ~/.zshrc aside
+      # and replace it with its template.
+      download && ZSH="$CUSTOM_OMZ_ZSH_PATH" sh "./$SCRIPT_PATH" --unattended --keep-zshrc
     fi
   else
     echo "oh-my-zsh already installed in $CUSTOM_OMZ_ZSH_PATH"
@@ -228,7 +249,7 @@ setup_powerlevel10k() {
   echo -e "${CYAN_BOLD}Setting up powerlevel10k${ENDCOLOR}"
 
   THEME_URL="https://github.com/romkatv/powerlevel10k.git"
-  DEST_PATH="${ZSH_CUSTOM:-$ZSH/custom}/themes/powerlevel10k"
+  DEST_PATH="${ZSH_CUSTOM:-${ZSH:-$HOME/.oh-my-zsh}/custom}/themes/powerlevel10k"
   
 
   # Clone powerlevel10k theme
@@ -246,87 +267,70 @@ setup_powerlevel10k() {
 
 # Display usage information with short and long options
 display_usage() {
-  echo -e "${CYAN_BOLD}Usage: $0 [-h] [-i] [-d] [-n] [-y]${ENDCOLOR}"
+  echo -e "${CYAN_BOLD}Usage: $0 [-h] [-d] [-i | -y] [-l | -n | -z]${ENDCOLOR}"
   echo "  Options: "
-  echo "  -h, --help        Display this help message"
-  echo "  -d, --dry-run     Print what would be done without actually doing it."
-  echo "  -i, --interactive Enable prompts before overwriting symlinks"
-  echo "  -y, --yes, --no-prompt   Do not prompt before creating or overwriting symlinks"
-  echo "  -n, --nvim        Setup nvim config only"
-  echo "  -z, --zsh         Setup zsh: oh-my-zsh + theme + plugins"
+  echo "  -h, --help                Display this help message"
+  echo "  -d, --dry-run             Print what would be done without actually doing it."
+  echo "  -i, --interactive         Prompt before overwriting existing files (default)"
+  echo "  -y, --yes, --no-prompt    Do not prompt before creating or overwriting symlinks"
+  echo "  -l, --link                Create symlinks only"
+  echo "  -n, --nvim                Setup symlinks + nvim config only"
+  echo "  -z, --zsh                 Setup symlinks + zsh: oh-my-zsh + theme + plugins"
+  echo ""
+  echo "  With no -l/-n/-z, everything is set up. Existing files are backed up to <file>.bak.<timestamp>."
 }
 
+# Always operate from the repo root so git ls-files / relative paths work from anywhere
+DOTFILES_DIR="${0:A:h}"
+cd "$DOTFILES_DIR"
+
 # Set default values for flags
-PROMPT_BEFORE_OVERWRITE=true # -i flag
-DRY_RUN=false                # - d flag
-DRY_RUN_MSG=""
+PROMPT_BEFORE_OVERWRITE=true # -i / -y
+DRY_RUN=false                # -d
+MODE=all                     # -l / -n / -z
 
 # Setup colors for shell output
 colors
-
-# Parse command line options. If --help flag is present, display usage and exit
 
 if [[ "$#" -eq 0 ]]; then
   display_usage
   exit 0
 fi
 
-# Parse command line options. If --help flag is present, display usage and exit
-# Or if dry run flag is present, print what would be done without actually doing it
-
-# If --help flag is present, display usage no matter what other flags are present
-if [[ "$*" == *--help* ]] || [[ "$*" == *-h* ]]; then
-  display_usage
-  exit 0
-fi
-
-# If -y, --yes or any of its other aliases are present, disable prompts
-if [[ "$*" == *-y* || "$*" == *--yes* || "$*" == *--no-prompt* ]]; then
-  PROMPT_BEFORE_OVERWRITE=false
-fi
-
-# If --dry-run flag is present, print what would be done without actually doing it
-if [[ "$*" == *--dry-run* ]] || [[ "$*" == *-d* ]]; then
-  DRY_RUN=true
-  DRY_RUN_MSG="${WARNING_YELLOW_BOLD}Dry run: ${ENDCOLOR}"
-fi
-
+# Parse all flags first, then act, so flag order does not matter (e.g. -d -y == -y -d)
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
-  -i | --interactive)
-    PROMPT_BEFORE_OVERWRITE=true
-    link
-    setup_nvim
-    setup_ohmyzsh
-    setup_ohmyzsh_plugins
-    setup_powerlevel10k
-    exit 0
-    ;;
-  -y | --yes | --no-prompt)
-    PROMPT_BEFORE_OVERWRITE=false
-    link
-    setup_nvim
-    setup_ohmyzsh
-    setup_ohmyzsh_plugins
-    setup_powerlevel10k
-    exit 0
-    ;;
-  -n | --nvim)
-    link
-    setup_nvim
-    exit 0
-    ;;
-  -z | --zsh)
-    link
-    setup_ohmyzsh
-    setup_ohmyzsh_plugins
-    setup_powerlevel10k
-    exit 0
-    ;;
+  -h | --help) display_usage; exit 0 ;;
+  -d | --dry-run) DRY_RUN=true ;;
+  -i | --interactive) PROMPT_BEFORE_OVERWRITE=true ;;
+  -y | --yes | --no-prompt) PROMPT_BEFORE_OVERWRITE=false ;;
+  -l | --link) MODE=link ;;
+  -n | --nvim) MODE=nvim ;;
+  -z | --zsh) MODE=zsh ;;
   *)
     echo "Unknown parameter passed: $1"
     display_usage
     exit 1
     ;;
   esac
+  shift
 done
+
+[[ "$DRY_RUN" == true ]] && echo -e "${WARNING_YELLOW_BOLD}Dry run: no changes will be made${ENDCOLOR}"
+
+link
+case "$MODE" in
+link) ;;
+nvim) setup_nvim ;;
+zsh)
+  setup_ohmyzsh
+  setup_ohmyzsh_plugins
+  setup_powerlevel10k
+  ;;
+all)
+  setup_nvim
+  setup_ohmyzsh
+  setup_ohmyzsh_plugins
+  setup_powerlevel10k
+  ;;
+esac

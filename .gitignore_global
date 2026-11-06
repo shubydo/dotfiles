@@ -1,0 +1,25 @@
+# Global gitignore file
+# Linked to ~/.gitignore_global by setup.zsh. Enable with:
+# git config --global core.excludesfile "$HOME/.gitignore_global"
+
+# OS
+# Mac
+.DS_Store
+
+
+# IDE
+.vscode
+.idea
+
+
+# Terraform
+.terraform*
+*.tfstate
+*tfplan*
+
+# Node
+node_modules
+
+# Go workspaces
+go.work
+go.work.sum
